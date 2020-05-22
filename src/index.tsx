@@ -8,7 +8,9 @@ import * as serviceWorker from "./serviceWorker";
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
-export const history = createBrowserHistory();
+export const history = createBrowserHistory({
+  basename: "predictor-ui",
+});
 
 ReactDOM.render(
   <Router history={history}>
