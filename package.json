@@ -31,7 +31,7 @@
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5"
   },
-  "homepage": "https://ftworg.github.io/predictor",
+  "homepage": "https://hdhilip98.github.io/predictor",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
