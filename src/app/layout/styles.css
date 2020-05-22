@@ -1,0 +1,19 @@
+@import "../../../node_modules/antd/dist/antd.css";
+
+.defaultPadding {
+  padding: 10px;
+}
+
+.site-layout .site-layout-background {
+  background: #fff;
+  margin: 15px 0;
+  height: 87vh;
+}
+
+.loader {
+  height: 100vh;
+}
+
+.center-spinner {
+  margin: 12% auto;
+}

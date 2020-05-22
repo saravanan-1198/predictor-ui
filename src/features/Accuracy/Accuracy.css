@@ -1,0 +1,13 @@
+.center-text {
+  text-align: center;
+}
+
+.center-accu {
+  margin-left: 55%;
+  transform: translateX(-50%);
+  margin-top: 50px;
+}
+
+.center-total-accu {
+  margin-left: 15%;
+}

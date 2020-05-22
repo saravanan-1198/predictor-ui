@@ -1,0 +1,15 @@
+.logo {
+  /* margin-right: 10px;
+  margin-left: 30px; */
+  margin: auto 30px;
+  color: black;
+  font-weight: 600;
+  text-transform: capitalize;
+  font-size: 20px;
+  float: left;
+}
+
+.right {
+  float: right;
+  height: 100%;
+}
