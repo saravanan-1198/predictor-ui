@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import "./Home.css";
 import { Layout, Modal } from "antd";
 import Prediction from "../../features/Prediction/Prediction";
-import { FileUpload } from "../../features/Upload/FileUpload";
+import FileUpload from "../../features/Upload/FileUpload";
 import { Switch, Route, RouteComponentProps } from "react-router-dom";
 import { Dashboard } from "../../features/Dashboard/Dashboard";
 import { SignUpForm } from "../SignUp/SignUpForm";

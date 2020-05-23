@@ -94,7 +94,7 @@ const Login: React.FC<RouteComponentProps> = ({ history }) => {
           </Form>
         </div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>Foodstheword ©2020</Footer>
+      <Footer style={{ textAlign: "center" }}>Predictor UI ©2020</Footer>
     </Layout>
   );
 };

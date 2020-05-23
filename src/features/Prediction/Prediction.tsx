@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./Prediction.css";
 import { Row, Col, Typography } from "antd";
 import { UserInput } from "../UserInput/UserInput";
@@ -9,16 +9,32 @@ import { observer } from "mobx-react-lite";
 const { Title } = Typography;
 
 const Prediction = () => {
-  const { showResult } = useContext(PredictionStore);
+  const { showResult, showForm } = useContext(PredictionStore);
+
+  const [zeros, setZeros] = useState(false);
+
+  const handleZeroValues = (value: boolean) => {
+    setZeros(value);
+  };
 
   return (
     <Row>
-      <Col span={7}>
-        <UserInput />
-      </Col>
-      <Col span={17}>
+      {showForm && (
+        <Col span={7}>
+          <UserInput />
+        </Col>
+      )}
+
+      <Col span={showForm ? 17 : 24}>
         {showResult ? (
-          <PredictionResult />
+          <PredictionResult setZeros={handleZeroValues} />
+        ) : zeros ? (
+          <div className="prediction-title">
+            <Title>No Sales</Title>
+            <Title level={4}>
+              No non zero sales data found for given input
+            </Title>
+          </div>
         ) : (
           <div className="prediction-title">
             <Title>Prediction</Title>

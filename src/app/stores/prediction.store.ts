@@ -2,6 +2,7 @@ import { configure, observable, action, computed } from "mobx";
 import { createContext } from "react";
 import moment, { Moment } from "moment";
 import { Line, Pie } from "@antv/g2plot";
+import { TrainingStatus } from "../models/training-status.enum";
 
 configure({ enforceActions: "always" });
 
@@ -16,6 +17,9 @@ class PredictionStore {
   ];
 
   @observable
+  categories: string[] = [];
+
+  @observable
   predictionOutput: any;
 
   @observable
@@ -23,6 +27,9 @@ class PredictionStore {
 
   @observable
   showResult: boolean = false;
+
+  @observable
+  showForm: boolean = true;
 
   @observable
   branchList: { key: number; name: string }[] = [];
@@ -35,6 +42,21 @@ class PredictionStore {
 
   @observable
   piePlot: Pie | null = null;
+
+  @observable
+  FileUploadStatus: TrainingStatus = TrainingStatus.Pending;
+
+  @observable
+  tableData: any[] = [];
+
+  @observable
+  PipelineInitiatedStatus: TrainingStatus = TrainingStatus.Pending;
+
+  @observable
+  TrainingCompletedStatus: TrainingStatus = TrainingStatus.Pending;
+
+  @observable
+  ModelReadyStatus: TrainingStatus = TrainingStatus.Pending;
 
   @computed get lineData() {
     const lineData: { year: string; sales: number }[] = [];
@@ -81,6 +103,31 @@ class PredictionStore {
   }
 
   @action
+  setTableData = (data: any[]) => {
+    this.tableData = data;
+  };
+
+  @action
+  setFileUploaded = (status: TrainingStatus) => {
+    this.FileUploadStatus = status;
+  };
+
+  @action
+  setPipelineInit = (status: TrainingStatus) => {
+    this.PipelineInitiatedStatus = status;
+  };
+
+  @action
+  setTrainingCompleted = (status: TrainingStatus) => {
+    this.TrainingCompletedStatus = status;
+  };
+
+  @action
+  setModelReady = (status: TrainingStatus) => {
+    this.ModelReadyStatus = status;
+  };
+
+  @action
   setLinePlot = (linePlot: Line) => {
     this.linePlot = linePlot;
   };
@@ -88,6 +135,11 @@ class PredictionStore {
   @action
   setPiePlot = (piePlot: Pie) => {
     this.piePlot = piePlot;
+  };
+
+  @action
+  setCategories = (value: string[]) => {
+    this.categories = value;
   };
 
   @action
@@ -113,6 +165,11 @@ class PredictionStore {
   @action
   setShowResult = (value: boolean) => {
     this.showResult = value;
+  };
+
+  @action
+  toggleShowForm = (value: boolean) => {
+    this.showForm = value;
   };
 
   @action

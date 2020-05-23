@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Space, Input } from "antd";
+import { Table, Button, Space, Input, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import PredictionStore from "../../app/stores/prediction.store";
 import { SearchOutlined } from "@ant-design/icons";
@@ -34,10 +34,20 @@ const defaultColumns: any[] = [
   },
 ];
 
-const PredictionQuantity = () => {
-  const { predictionOutput, treeData } = useContext(PredictionStore);
+interface IProps {
+  setZeros: (value: boolean) => void;
+}
 
-  const [dataSource, setDataSource] = useState<any[]>([]);
+const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
+  const {
+    predictionOutput,
+    treeData,
+    setTableData,
+    setShowResult,
+    toggleShowForm,
+    tableData,
+  } = useContext(PredictionStore);
+
   const [columns, setColumns] = useState<any[]>([]);
   const [pageSize, setPageSize] = useState(10);
 
@@ -133,6 +143,8 @@ const PredictionQuantity = () => {
 
       predictionOutput[Object.keys(predictionOutput)[0]].forEach(
         (item: any) => {
+          if (item.predicion["total"].quantity === 0) return;
+
           const tableData: any = {};
 
           tableData["key"] = item.key;
@@ -174,7 +186,16 @@ const PredictionQuantity = () => {
         subFilterCategories.push(v);
       });
 
-      setDataSource(newDataSource);
+      setTableData(newDataSource);
+
+      if (newDataSource.length === 0) {
+        setZeros(true);
+        setShowResult(false);
+      } else {
+        setZeros(false);
+        setShowResult(true);
+        toggleShowForm(false);
+      }
     };
 
     const generateColumns = () => {
@@ -261,7 +282,7 @@ const PredictionQuantity = () => {
   return (
     <div>
       <Table
-        dataSource={dataSource}
+        dataSource={tableData}
         columns={columns}
         onChange={handleOnTableChange}
         pagination={{

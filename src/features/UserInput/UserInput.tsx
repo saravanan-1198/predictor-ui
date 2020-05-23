@@ -36,6 +36,8 @@ export const UserInput = () => {
     setDateInput,
     setStoreCriteria,
     dateInput,
+    setCategories,
+    categories,
     predictionOutput,
   } = useContext(PredictionStore);
 
@@ -56,11 +58,18 @@ export const UserInput = () => {
         setBranchList(resultBranch);
         const resultCat = await Services.AssetService.getCategories();
         if (mounted) {
-          setTreeData(resultCat);
+          setTreeData([
+            {
+              key: "0-0",
+              title: "Select All",
+              value: "0-0",
+            },
+            ...resultCat,
+          ]);
           form.setFieldsValue({
             criteria: criteria,
             branch: resultBranch[0].key,
-            // categories: ["0-1-3"],
+            categories: categories,
           });
           setFormLoading(false);
         }
@@ -73,7 +82,7 @@ export const UserInput = () => {
       form.setFieldsValue({
         criteria: criteria,
         branch: branchList[0].key,
-        // categories: ["0-1-3"],
+        categories: categories,
         range: dateInput,
       });
     }
@@ -198,13 +207,16 @@ export const UserInput = () => {
           value.criteria
         ),
         branch: [value.branch],
-        category: generateCatInput(value.categories),
+        category: generateCatInput(
+          value.categories.filter((v: string) => v !== "0-0")
+        ),
         years: generateCalendarInput(
           value.range[0],
           value.range[1],
           value.criteria
         ),
       };
+      setCategories(value.categories);
       setDateInput(value.range);
       setStoreCriteria(value.criteria);
       setTableLoading(true);
@@ -233,6 +245,48 @@ export const UserInput = () => {
     style: {
       width: "100%",
     },
+  };
+
+  let allSelected = false;
+
+  const handleChangeTree = (value: any, labelList: any, extra: any) => {
+    if (allSelected && !value.includes("0-0")) {
+      form.setFieldsValue({
+        categories: [],
+      });
+
+      allSelected = false;
+    }
+
+    if (allSelected) {
+      form.setFieldsValue({
+        categories: value.filter((v: string) => v !== "0-0"),
+      });
+
+      allSelected = false;
+
+      return;
+    }
+
+    if (value.includes("0-0")) {
+      form.setFieldsValue({
+        categories: [
+          "0-0",
+          "0-1",
+          "0-2",
+          "0-3",
+          "0-4",
+          "0-5",
+          "0-6",
+          "0-7",
+          "0-8",
+          "0-9",
+          "0-10",
+        ],
+      });
+
+      allSelected = true;
+    }
   };
 
   return (
@@ -284,7 +338,7 @@ export const UserInput = () => {
               { required: true, message: "Please select the categories" },
             ]}
           >
-            <TreeSelect {...tProps} />
+            <TreeSelect {...tProps} onChange={handleChangeTree} />
           </Form.Item>
           <Form.Item label="Branch" name="branch">
             <Select>

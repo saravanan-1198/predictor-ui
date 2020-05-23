@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { history } from "../../index";
 import { IPredictionInput } from "../models/prediction-input.model";
 
-axios.defaults.baseURL = "https://ftw-api-predictor.herokuapp.com/api";
+axios.defaults.baseURL = "http://localhost:5000/api";
 
 axios.interceptors.response.use(undefined, (error) => {
   if (error.response.status === 404) {
@@ -64,9 +64,19 @@ const PredictionService = {
     requests.post("/predict", predictionInput),
 };
 
+const UploadService = {
+  allowUpload: () => requests.get("/upload"),
+};
+
+const ExportService = {
+  exportCSV: (tableData: any[]) => requests.post("/report", tableData),
+};
+
 export const Services = {
   AuthService,
   UserService,
   PredictionService,
   AssetService,
+  UploadService,
+  ExportService,
 };
