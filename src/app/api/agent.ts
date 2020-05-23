@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { history } from "../../index";
 import { IPredictionInput } from "../models/prediction-input.model";
 
-axios.defaults.baseURL = "http://192.168.191.186:5000/api";
+axios.defaults.baseURL = "https://ftw-api-predictor.herokuapp.com/api";
 
 axios.interceptors.response.use(undefined, (error) => {
   if (error.response.status === 404) {
