@@ -11,6 +11,9 @@ class PredictionStore {
   criteria: number = 0;
 
   @observable
+  selectAll: boolean = false;
+
+  @observable
   dateInput: Moment[] = [
     moment(new Date(2020, 1, 3)),
     moment(new Date(2020, 1, 5)),
@@ -41,7 +44,10 @@ class PredictionStore {
   linePlot: Line | null = null;
 
   @observable
-  piePlot: Pie | null = null;
+  piePlotQuantity: Pie | null = null;
+
+  @observable
+  piePlotRevenue: Pie | null = null;
 
   @observable
   FileUploadStatus: TrainingStatus = TrainingStatus.Pending;
@@ -69,10 +75,10 @@ class PredictionStore {
             if (!data) {
               lineData.push({
                 year: key,
-                sales: item.predicion[key].revenue,
+                sales: Math.round(item.predicion[key].revenue),
               });
             } else {
-              data.sales += item.predicion[key].revenue;
+              data.sales += Math.round(item.predicion[key].revenue);
             }
           }
         });
@@ -82,7 +88,7 @@ class PredictionStore {
     return lineData;
   }
 
-  @computed get pieData() {
+  @computed get pieDataQuantity() {
     const pieData: { type: string; value: number }[] = [];
 
     this.predictionOutput[Object.keys(this.predictionOutput)[0]].forEach(
@@ -101,6 +107,34 @@ class PredictionStore {
 
     return pieData;
   }
+
+  @computed get pieDataRevenue() {
+    const pieData: { type: string; value: number }[] = [];
+
+    this.predictionOutput[Object.keys(this.predictionOutput)[0]].forEach(
+      (item: any) => {
+        const data = pieData.find((pd) => pd.type === item.super_category);
+        if (!data) {
+          pieData.push({
+            type: item.super_category,
+            // value: Number.parseFloat(
+            //   item.predicion["total"].revenue.toFixed(2)
+            // ),
+            value: Math.round(item.predicion["total"].revenue),
+          });
+        } else {
+          data.value += Math.round(item.predicion["total"].revenue);
+        }
+      }
+    );
+
+    return pieData;
+  }
+
+  @action
+  setSelectAll = (value: boolean) => {
+    this.selectAll = value;
+  };
 
   @action
   setTableData = (data: any[]) => {
@@ -133,8 +167,13 @@ class PredictionStore {
   };
 
   @action
-  setPiePlot = (piePlot: Pie) => {
-    this.piePlot = piePlot;
+  setPiePlotQuantity = (piePlot: Pie) => {
+    this.piePlotQuantity = piePlot;
+  };
+
+  @action
+  setPiePlotRevenue = (piePlot: Pie) => {
+    this.piePlotRevenue = piePlot;
   };
 
   @action

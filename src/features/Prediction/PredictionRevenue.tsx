@@ -14,7 +14,7 @@ const PredictionRevenue = () => {
         yField: "sales",
         animation: true,
         title: {
-          text: "Sales Vs Year (Jan to Dec 2019)",
+          text: "Revenue Graph",
           visible: true,
           alignTo: "middle",
         },
@@ -30,7 +30,7 @@ const PredictionRevenue = () => {
         yField: "sales",
         animation: true,
         title: {
-          text: "Sales Vs Year (Jan to Dec 2019)",
+          text: "Revenue Graph",
           visible: true,
           alignTo: "middle",
         },

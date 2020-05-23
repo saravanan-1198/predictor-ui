@@ -8,6 +8,7 @@ import {
   Spin,
   TreeSelect,
   message,
+  Checkbox,
 } from "antd";
 import { Services } from "../../app/api/agent";
 import * as Moment from "moment";
@@ -33,6 +34,8 @@ export const UserInput = () => {
     setBranchList,
     treeData,
     setTreeData,
+    setSelectAll,
+    selectAll,
     setDateInput,
     setStoreCriteria,
     dateInput,
@@ -58,18 +61,12 @@ export const UserInput = () => {
         setBranchList(resultBranch);
         const resultCat = await Services.AssetService.getCategories();
         if (mounted) {
-          setTreeData([
-            {
-              key: "0-0",
-              title: "Select All",
-              value: "0-0",
-            },
-            ...resultCat,
-          ]);
+          setTreeData(resultCat);
           form.setFieldsValue({
             criteria: criteria,
             branch: resultBranch[0].key,
             categories: categories,
+            selectAll: selectAll,
           });
           setFormLoading(false);
         }
@@ -84,6 +81,7 @@ export const UserInput = () => {
         branch: branchList[0].key,
         categories: categories,
         range: dateInput,
+        selectAll: selectAll,
       });
     }
 
@@ -207,15 +205,14 @@ export const UserInput = () => {
           value.criteria
         ),
         branch: [value.branch],
-        category: generateCatInput(
-          value.categories.filter((v: string) => v !== "0-0")
-        ),
+        category: generateCatInput(value.categories),
         years: generateCalendarInput(
           value.range[0],
           value.range[1],
           value.criteria
         ),
       };
+      setSelectAll(value.selectAll);
       setCategories(value.categories);
       setDateInput(value.range);
       setStoreCriteria(value.criteria);
@@ -247,28 +244,48 @@ export const UserInput = () => {
     },
   };
 
-  let allSelected = false;
+  // const handleChangeTree = (value: any, labelList: any, extra: any) => {
+  //   if (allSelected && !value.includes("0-0")) {
+  //     form.setFieldsValue({
+  //       categories: [],
+  //     });
 
-  const handleChangeTree = (value: any, labelList: any, extra: any) => {
-    if (allSelected && !value.includes("0-0")) {
-      form.setFieldsValue({
-        categories: [],
-      });
+  //     allSelected = false;
+  //   }
 
-      allSelected = false;
-    }
+  //   if (allSelected) {
+  //     form.setFieldsValue({
+  //       categories: value.filter((v: string) => v !== "0-0"),
+  //     });
 
-    if (allSelected) {
-      form.setFieldsValue({
-        categories: value.filter((v: string) => v !== "0-0"),
-      });
+  //     allSelected = false;
 
-      allSelected = false;
+  //     return;
+  //   }
 
-      return;
-    }
+  //   if (value.includes("0-0")) {
+  //     form.setFieldsValue({
+  //       categories: [
+  //         "0-0",
+  //         "0-1",
+  //         "0-2",
+  //         "0-3",
+  //         "0-4",
+  //         "0-5",
+  //         "0-6",
+  //         "0-7",
+  //         "0-8",
+  //         "0-9",
+  //         "0-10",
+  //       ],
+  //     });
 
-    if (value.includes("0-0")) {
+  //     allSelected = true;
+  //   }
+  // };
+
+  const handleSelectAll = (e: any) => {
+    if (e.target.checked) {
       form.setFieldsValue({
         categories: [
           "0-0",
@@ -281,11 +298,10 @@ export const UserInput = () => {
           "0-7",
           "0-8",
           "0-9",
-          "0-10",
         ],
       });
-
-      allSelected = true;
+    } else {
+      form.setFieldsValue({ categories: [] });
     }
   };
 
@@ -338,7 +354,12 @@ export const UserInput = () => {
               { required: true, message: "Please select the categories" },
             ]}
           >
-            <TreeSelect {...tProps} onChange={handleChangeTree} />
+            <TreeSelect {...tProps} />
+          </Form.Item>
+          <Form.Item name="selectAll">
+            <Checkbox onChange={handleSelectAll}>
+              Select All Categories
+            </Checkbox>
           </Form.Item>
           <Form.Item label="Branch" name="branch">
             <Select>

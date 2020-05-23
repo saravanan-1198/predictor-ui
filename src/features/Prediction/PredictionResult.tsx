@@ -51,10 +51,10 @@ const PredictionResult: React.FC<IProps> = ({ setZeros }) => {
           <TabPane tab="Quantity" key="1">
             <PredictionQuantity setZeros={setZeros} />
           </TabPane>
-          <TabPane tab="Revenue - Category" key="2">
+          <TabPane tab="Category Split" key="2">
             <CategoryRevenue />
           </TabPane>
-          <TabPane tab="Revenue - Overall" key="3">
+          <TabPane tab="Revenue Graph" key="3">
             <PredictionRevenue />
           </TabPane>
         </Tabs>
