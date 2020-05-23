@@ -44,14 +44,16 @@ class AppStore {
         }
       });
     } catch (error) {
-      this.loggingIn = false;
-      if (error.response === undefined) {
-        message.error("Server not running. Please try again later");
-      } else if (error.response.status === 400) {
-        message.error("Invalid user crendentails");
-      } else {
-        message.error("Server Error. Please try again later");
-      }
+      runInAction("Login Failed", () => {
+        this.loggingIn = false;
+        if (error.response === undefined) {
+          message.error("Server not running. Please try again later");
+        } else if (error.response.status === 400) {
+          message.error("Invalid user crendentails");
+        } else {
+          message.error("Server Error. Please try again later");
+        }
+      });
       return false;
     }
   };
