@@ -9,3 +9,6 @@ deploy:
   app: predictor-ui
   on:
     branch: master
+
+script:
+  - echo "skipping test"
