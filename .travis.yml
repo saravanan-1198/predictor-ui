@@ -11,5 +11,4 @@ deploy:
     branch: master
 
 script:
-  - npm install
-  - npm run build
+  - CI=false npm run build
