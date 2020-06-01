@@ -1,0 +1,12 @@
+sudo: required
+language: node_js
+deploy:
+  provider: heroku
+  api_key:
+    secure: 1T96mYhBfsakpJDR27wkfWzuBWJBiU7TsZp10xs8v8CYdy5FbeFZcaUAq5466b/llTiieXivUglr6kMGDeFw95fRPH8Y16MGDXQCVG2DdtUc7GQepoCeqXzB5A99+ccCBs+4pY9SK2M5qsVcllCwZTPsLbOjHh1F7ttMa0JWpxPUKJlZaYIqErFgN7RrzJeSBywP59RvqqCzm7+pktI4WIq8I35ytQzl5jucZw/cWYldPfYX7/TH9s2qbtEf7WdAC8VrMXw7a+H46faFZ9f8Z3E6d1DZEmW0E8D1S/qzK/C4/1SZvTgUcRlV1oGzU9nK8PLSDFesk1IK6LSBEW6dI27xkVaq3mUkM2Yi03ZNRWz1SFS82gzLqPoCT4ui/YE/NqEcjhJmCSaIA5q5yKp0CwB3/SR/Ab+T8gczQvyQE+dZEHPZ15UuU1SOfX+YarCQEYZEX5bllxZoxB0lDB/IKMkgXFqRmJoxvBNP2W45ZCtSFOJ1k1804N/1DDOSCa5H8NbaatpyDlYIBSJep7xuJyM2dzBqUXpskO26FuWeAUWhOT03x9Bg9sHuEQBpOB91ASaonnhPMlbmb5HraZMCQNFrSAL6pOoy9Hn29+8HlqvMREAN24ClSMkouw5Gq3zP8Qq+rNpU/u1cKflun3n5VUC7IMTQegQnVNpGZoxDpcs=
+  app: predictor-ui
+  on:
+    branch: master
+
+script:
+  - npm run build
