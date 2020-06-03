@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { PageHeader, Tabs, Button, Spin, Tag } from "antd";
+import { PageHeader, Tabs, Button, Spin, Tag, message } from "antd";
 import PredictionQuantity from "./PredictionQuantity";
 import PredictionRevenue from "./PredictionRevenue";
 import { observer } from "mobx-react-lite";
@@ -28,9 +28,16 @@ const PredictionResult: React.FC<IProps> = ({ setZeros }) => {
 
   const handleDownloadCSV = async () => {
     setLoading(true);
-    const result = await Services.ExportService.exportCSV(tableData);
-    setLoading(false);
-    download(result, "Report.csv");
+    try {
+      const result = await Services.ExportService.exportCSV(tableData);
+      setLoading(false);
+      download(result, "Report.csv");
+    } catch (error) {
+      message.error(
+        "Server Error. Please try again later / report bug to admin"
+      );
+      setLoading(false);
+    }
   };
 
   return (
