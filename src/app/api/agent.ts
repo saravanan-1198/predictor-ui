@@ -58,6 +58,7 @@ const UserService = {
 const AssetService = {
   getBranches: () => requests.get("/branches"),
   getCategories: () => requests.get("/categories"),
+  getLastTraining: () => requests.get("/model"),
 };
 
 const PredictionService = {
