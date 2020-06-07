@@ -8,6 +8,7 @@ import { CategoryRevenue } from "./CategoryRevenue";
 import { Services } from "../../app/api/agent";
 import download from "downloadjs";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { Insights } from "./Insights";
 const { TabPane } = Tabs;
 
 interface IProps {
@@ -78,6 +79,9 @@ const PredictionResult: React.FC<IProps> = ({ setZeros }) => {
           </TabPane>
           <TabPane tab="Revenue Graph" key="3">
             <PredictionRevenue />
+          </TabPane>
+          <TabPane tab="Insights" key="4">
+            <Insights />
           </TabPane>
         </Tabs>
       </Spin>

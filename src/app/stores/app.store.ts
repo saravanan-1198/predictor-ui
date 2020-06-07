@@ -9,6 +9,15 @@ configure({ enforceActions: "always" });
 const authTokenKey = "x-auth-token";
 
 class AppStore {
+  constructor() {
+    this.reset();
+  }
+
+  @action reset = () => {
+    this.token = localStorage.getItem(authTokenKey);
+    this.loggingIn = false;
+  };
+
   @observable token: string | null = localStorage.getItem(authTokenKey);
 
   @observable loggingIn: boolean = false;

@@ -21,7 +21,7 @@ export const UploadButtons = () => {
     name: "file",
     accept: ".csv",
     multiple: false,
-    action: "http://localhost:5000/api/upload",
+    action: Services.UploadService.FileUploadURL,
     onChange(info: any) {
       const { status } = info.file;
       if (status !== "uploading") {

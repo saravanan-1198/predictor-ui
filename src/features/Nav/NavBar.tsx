@@ -6,6 +6,7 @@ import { Routes } from "../../app/layout/Routes";
 import { observer } from "mobx-react-lite";
 import AppStore from "../../app/stores/app.store";
 import { Services } from "../../app/api/agent";
+import { Days } from "../../app/models/days.enum";
 const { Header } = Layout;
 
 interface IProps {
@@ -47,6 +48,9 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
         <Menu.Item key="2">
           <NavLink to="/predict">Predict</NavLink>
         </Menu.Item>
+        <Menu.Item key="7">
+          <NavLink to="/compare">Compare</NavLink>
+        </Menu.Item>
         <Menu.Item key="3">
           <NavLink to="/upload">Upload</NavLink>
         </Menu.Item>
@@ -64,7 +68,7 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
           </Menu.Item>
         ) : null} */}
         <Menu.Item
-          key="5"
+          key="4"
           disabled
           style={{ cursor: "text" }}
           className="right"

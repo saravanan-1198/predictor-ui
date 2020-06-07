@@ -1,10 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Space, Input, Typography } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import { PageHeader, Space, Button, Input, Table, Tag } from "antd";
+import CompareStore from "../../app/stores/compare.store";
+import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
-import PredictionStore from "../../app/stores/prediction.store";
-import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import { IPredictionOutput } from "../../app/models/prediction-output.model";
+import PredictionStore from "../../app/stores/prediction.store";
 
 let subFilterCategories: { text: string; value: string }[] = [];
 const subFilterCategoriesOriginal: { text: string; value: string }[] = [];
@@ -47,19 +51,20 @@ const defaultColumns: any[] = [
   },
 ];
 
-interface IProps {
-  setZeros: (value: boolean) => void;
-}
-
-const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
+const CompareResult = () => {
   const {
-    predictionOutput,
-    treeData,
-    setTableData,
-    setShowResult,
-    toggleShowForm,
-    tableData,
-  } = useContext(PredictionStore);
+    toggleShowCompareForm,
+    showCompareForm,
+    setTableDataCompare,
+    tableDataCompare,
+    setShowCompareResult,
+    totalAccuracy,
+    totalActualRevenue,
+    totalErrorRevenue,
+    totalPredictedRevenue,
+    compareOutput,
+  } = useContext(CompareStore);
+  const { treeData } = useContext(PredictionStore);
 
   const [columns, setColumns] = useState<any[]>([]);
   const [pageSize, setPageSize] = useState(10);
@@ -147,6 +152,89 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
       setSearchText("");
     };
 
+    const generateColumns = () => {
+      const newColumns = [
+        ...defaultColumns,
+        {
+          title: "Item Name",
+          dataIndex: "name",
+          key: "name",
+          ...getColumnSearchProps("name"),
+          width: 200,
+          fixed: "left",
+        },
+        {
+          title: "Quantity",
+          dataIndex: "quantity",
+          key: "quantity",
+          sorter: (a: any, b: any) => a["quantity"] - b["quantity"],
+          sortDirections: ["descend", "ascend"],
+          width: 160,
+        },
+        {
+          title: "Revenue",
+          dataIndex: "revenue",
+          key: "revenue",
+          sorter: (a: any, b: any) => a["revenue"] - b["revenue"],
+          sortDirections: ["descend", "ascend"],
+          width: 160,
+        },
+        {
+          title: "Actual Quantity",
+          dataIndex: "actual_quantity",
+          key: "actual_quantity",
+          sorter: (a: any, b: any) =>
+            a["actual_quantity"] - b["actual_quantity"],
+          sortDirections: ["descend", "ascend"],
+          width: 160,
+        },
+        {
+          title: "Actual Revenue",
+          dataIndex: "actual_revenue",
+          key: "actual_revenue",
+          sorter: (a: any, b: any) => a["actual_revenue"] - b["actual_revenue"],
+          sortDirections: ["descend", "ascend"],
+          width: 160,
+        },
+        {
+          title: "Quantity Accuracy",
+          dataIndex: "quantity_accuracy",
+          key: "quantity_accuracy",
+          sorter: (a: any, b: any) =>
+            a["quantity_accuracy"] - b["quantity_accuracy"],
+          sortDirections: ["descend", "ascend"],
+          width: 160,
+        },
+        {
+          title: "Quantity Error",
+          dataIndex: "quantity_error",
+          key: "quantity_error",
+          sorter: (a: any, b: any) => a["quantity_error"] - b["quantity_error"],
+          sortDirections: ["descend", "ascend"],
+          width: 160,
+        },
+        {
+          title: "Revenue Accuracy",
+          dataIndex: "revenue_accuracy",
+          key: "revenue_accuracy",
+          sorter: (a: any, b: any) =>
+            a["revenue_accuracy"] - b["revenue_accuracy"],
+          sortDirections: ["descend", "ascend"],
+          width: 160,
+        },
+        {
+          title: "Revenue Error",
+          dataIndex: "revenue_error",
+          key: "revenue_error",
+          sorter: (a: any, b: any) => a["revenue_error"] - b["revenue_error"],
+          sortDirections: ["descend", "ascend"],
+          width: 160,
+        },
+      ];
+
+      setColumns(newColumns);
+    };
+
     const generateData = () => {
       subFilterCategories.length = 0;
       subFilterCategoriesOriginal.length = 0;
@@ -154,12 +242,8 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
 
       const newDataSource: any[] = [];
 
-      const result = predictionOutput as IPredictionOutput;
-
-      result.branches.forEach((branch) => {
+      compareOutput.branches.forEach((branch: any) => {
         branch.data.forEach((item: any) => {
-          if (item.predicion["total"].quantity === 0) return;
-
           const tableData: any = {};
 
           tableData["key"] = item.key;
@@ -202,11 +286,22 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
             });
           }
 
-          Object.keys(item.predicion).forEach((v: string) => {
-            if (v === "total")
-              tableData["totalRev"] = item.predicion[v].revenue.toFixed(2);
-            tableData[v] = item.predicion[v].quantity;
-          });
+          tableData["quantity"] = item.quantity;
+          tableData["revenue"] = Number.parseFloat(item.revenue.toFixed(2));
+          tableData["actual_quantity"] = item.actual_quantity;
+          tableData["actual_revenue"] = Number.parseFloat(
+            item.actual_revenue.toFixed(2)
+          );
+          tableData["quantity_accuracy"] = item.quantity_accuracy
+            ? Number.parseFloat(item.quantity_accuracy.toFixed(2))
+            : 0;
+          tableData["quantity_error"] = item.quantity_error;
+          tableData["revenue_accuracy"] = item.revenue_accuracy
+            ? Number.parseFloat(item.revenue_accuracy.toFixed(2))
+            : 0;
+          tableData["revenue_error"] = Number.parseFloat(
+            item.revenue_error.toFixed(2)
+          );
 
           newDataSource.push(tableData);
         });
@@ -216,69 +311,23 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
         subFilterCategories.push(v);
       });
 
-      setTableData(newDataSource);
+      setTableDataCompare(newDataSource);
 
       if (newDataSource.length === 0) {
-        setZeros(true);
-        setShowResult(false);
+        setShowCompareResult(true);
       } else {
-        setZeros(false);
-        setShowResult(true);
-        toggleShowForm(false);
+        setShowCompareResult(true);
+        toggleShowCompareForm(false);
       }
-    };
-
-    const generateColumns = () => {
-      const newColumns = [
-        ...defaultColumns,
-        {
-          title: "Item Name",
-          dataIndex: "name",
-          key: "name",
-          ...getColumnSearchProps("name"),
-          width: 200,
-          fixed: "left",
-        },
-      ];
-
-      const result = predictionOutput as IPredictionOutput;
-      Object.keys(result.branches[0].data[0].predicion).forEach((v: string) => {
-        if (v !== "total") {
-          newColumns.push({
-            title: v,
-            dataIndex: v,
-            key: v,
-            sorter: (a: any, b: any) => a[v] - b[v],
-            sortDirections: ["descend", "ascend"],
-            width: 150,
-          });
-        }
-      });
-
-      newColumns.push({
-        title: "Total Quantity",
-        dataIndex: "total",
-        key: "total",
-        sorter: (a: any, b: any) => a["total"] - b["total"],
-        sortDirections: ["descend", "ascend"],
-        fixed: "right",
-        width: 150,
-      });
-      newColumns.push({
-        title: "Total Revenue (₹)",
-        dataIndex: "totalRev",
-        key: "totalRev",
-        sorter: (a: any, b: any) => a["totalRev"] - b["totalRev"],
-        sortDirections: ["descend", "ascend"],
-        fixed: "right",
-        width: 160,
-      });
-      setColumns(newColumns);
     };
 
     generateColumns();
     generateData();
-  }, [predictionOutput, searchText, searchedColumn]);
+  }, [compareOutput, searchText, searchedColumn]);
+
+  const onPageSizeChange = (current: number, size: number) => {
+    setPageSize(size);
+  };
 
   const handleOnTableChange = (
     pagination: any,
@@ -312,16 +361,37 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
     }
   };
 
-  const onPageSizeChange = (current: number, size: number) => {
-    setPageSize(size);
-  };
-
   return (
     <div>
+      <PageHeader
+        className="site-page-header"
+        title="Compare Result"
+        tags={[
+          <Tag key={3} color="orange">
+            Revenue Accuracy - {totalAccuracy}%
+          </Tag>,
+          <Tag key={0} color="blue">
+            Predicted Revenue - ₹{totalPredictedRevenue}
+          </Tag>,
+          <Tag key={1} color="green">
+            Actual Revenue - ₹{totalActualRevenue}
+          </Tag>,
+          <Tag key={2} color="red">
+            Revenue Error - ₹{totalErrorRevenue}
+          </Tag>,
+        ]}
+        onBack={() => {
+          toggleShowCompareForm(!showCompareForm);
+        }}
+        backIcon={
+          showCompareForm ? <ArrowLeftOutlined /> : <ArrowRightOutlined />
+        }
+      />
       <Table
-        dataSource={tableData}
+        dataSource={tableDataCompare}
         columns={columns}
         onChange={handleOnTableChange}
+        style={{ margin: "0 20px" }}
         pagination={{
           pageSize: pageSize,
           pageSizeOptions: ["10", "20"],
@@ -336,4 +406,4 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
   );
 };
 
-export default observer(PredictionQuantity);
+export default observer(CompareResult);
