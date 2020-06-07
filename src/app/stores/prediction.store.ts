@@ -3,6 +3,7 @@ import { createContext } from "react";
 import moment, { Moment } from "moment";
 import { Line, Pie } from "@antv/g2plot";
 import { TrainingStatus } from "../models/training-status.enum";
+import { IPredictionOutput } from "../models/prediction-output.model";
 
 configure({ enforceActions: "always" });
 
@@ -12,6 +13,9 @@ class PredictionStore {
 
   @observable
   selectAll: boolean = false;
+
+  @observable
+  selectAllBranch: boolean = false;
 
   @observable
   dateInput: Moment[] = [
@@ -67,8 +71,10 @@ class PredictionStore {
   @computed get lineData() {
     const lineData: { year: string; sales: number }[] = [];
 
-    this.predictionOutput[Object.keys(this.predictionOutput)[0]].forEach(
-      (item: any) => {
+    const result = this.predictionOutput as IPredictionOutput;
+
+    result.branches.forEach((branch) => {
+      branch.data.forEach((item: any) => {
         Object.keys(item.predicion).forEach((key) => {
           if (key !== "total") {
             const data = lineData.find((pd) => pd.year === key);
@@ -82,8 +88,8 @@ class PredictionStore {
             }
           }
         });
-      }
-    );
+      });
+    });
 
     return lineData;
   }
@@ -91,8 +97,10 @@ class PredictionStore {
   @computed get pieDataQuantity() {
     const pieData: { type: string; value: number }[] = [];
 
-    this.predictionOutput[Object.keys(this.predictionOutput)[0]].forEach(
-      (item: any) => {
+    const result = this.predictionOutput as IPredictionOutput;
+
+    result.branches.forEach((branch) => {
+      branch.data.forEach((item: any) => {
         const data = pieData.find((pd) => pd.type === item.super_category);
         if (!data) {
           pieData.push({
@@ -102,17 +110,47 @@ class PredictionStore {
         } else {
           data.value += item.predicion["total"].quantity;
         }
-      }
-    );
+      });
+    });
 
     return pieData;
+  }
+
+  @computed get totalQuantity() {
+    let totalQ = 0;
+
+    const result = this.predictionOutput as IPredictionOutput;
+
+    result.branches.forEach((branch) => {
+      branch.data.forEach((data) => {
+        totalQ += data.predicion["total"].quantity;
+      });
+    });
+
+    return totalQ;
+  }
+
+  @computed get totalRevenue() {
+    let totalR = 0;
+
+    const result = this.predictionOutput as IPredictionOutput;
+
+    result.branches.forEach((branch) => {
+      branch.data.forEach((data) => {
+        totalR += data.predicion["total"].revenue;
+      });
+    });
+
+    return totalR.toFixed(2);
   }
 
   @computed get pieDataRevenue() {
     const pieData: { type: string; value: number }[] = [];
 
-    this.predictionOutput[Object.keys(this.predictionOutput)[0]].forEach(
-      (item: any) => {
+    const result = this.predictionOutput as IPredictionOutput;
+
+    result.branches.forEach((branch) => {
+      branch.data.forEach((item: any) => {
         const data = pieData.find((pd) => pd.type === item.super_category);
         if (!data) {
           pieData.push({
@@ -125,8 +163,8 @@ class PredictionStore {
         } else {
           data.value += Math.round(item.predicion["total"].revenue);
         }
-      }
-    );
+      });
+    });
 
     return pieData;
   }
@@ -134,6 +172,11 @@ class PredictionStore {
   @action
   setSelectAll = (value: boolean) => {
     this.selectAll = value;
+  };
+
+  @action
+  setSelectAllBranch = (value: boolean) => {
+    this.selectAllBranch = value;
   };
 
   @action

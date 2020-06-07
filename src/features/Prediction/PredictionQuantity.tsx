@@ -4,12 +4,25 @@ import { observer } from "mobx-react-lite";
 import PredictionStore from "../../app/stores/prediction.store";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
+import { IPredictionOutput } from "../../app/models/prediction-output.model";
 
 let subFilterCategories: { text: string; value: string }[] = [];
 const subFilterCategoriesOriginal: { text: string; value: string }[] = [];
 const superFilterCategories: { text: string; value: string }[] = [];
+const branchFilterList: { text: string; value: string }[] = [];
 
 const defaultColumns: any[] = [
+  {
+    title: "Branch",
+    dataIndex: "branch",
+    key: "branch",
+    fixed: "left",
+    width: 150,
+    filters: branchFilterList,
+    filterMultiple: true,
+    onFilter: (value: string, record: any) =>
+      record.branch.indexOf(value) === 0,
+  },
   {
     title: "Super Category",
     dataIndex: "super_category",
@@ -44,6 +57,7 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
     treeData,
     setTableData,
     setShowResult,
+    branchList,
     toggleShowForm,
     tableData,
   } = useContext(PredictionStore);
@@ -141,13 +155,28 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
 
       const newDataSource: any[] = [];
 
-      predictionOutput[Object.keys(predictionOutput)[0]].forEach(
-        (item: any) => {
+      const result = predictionOutput as IPredictionOutput;
+
+      result.branches.forEach((branch) => {
+        branch.data.forEach((item: any) => {
           if (item.predicion["total"].quantity === 0) return;
 
           const tableData: any = {};
 
           tableData["key"] = item.key;
+          tableData["branch"] = branch.branch;
+
+          if (
+            !branchFilterList.find(
+              (value) => value.value === tableData["branch"]
+            )
+          ) {
+            branchFilterList.push({
+              text: tableData["branch"],
+              value: tableData["branch"],
+            });
+          }
+
           tableData["name"] = item.name;
           tableData["sub_category"] = item.sub_category;
           tableData["super_category"] = item.super_category;
@@ -175,12 +204,14 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
           }
 
           Object.keys(item.predicion).forEach((v: string) => {
+            if (v === "total")
+              tableData["totalRev"] = item.predicion[v].revenue.toFixed(2);
             tableData[v] = item.predicion[v].quantity;
           });
 
           newDataSource.push(tableData);
-        }
-      );
+        });
+      });
 
       subFilterCategoriesOriginal.forEach((v) => {
         subFilterCategories.push(v);
@@ -211,9 +242,8 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
         },
       ];
 
-      Object.keys(
-        predictionOutput[Object.keys(predictionOutput)[0]][0].predicion
-      ).forEach((v: string) => {
+      const result = predictionOutput as IPredictionOutput;
+      Object.keys(result.branches[0].data[0].predicion).forEach((v: string) => {
         if (v !== "total") {
           newColumns.push({
             title: v,
@@ -231,6 +261,15 @@ const PredictionQuantity: React.FC<IProps> = ({ setZeros }) => {
         dataIndex: "total",
         key: "total",
         sorter: (a: any, b: any) => a["total"] - b["total"],
+        sortDirections: ["descend", "ascend"],
+        fixed: "right",
+        width: 150,
+      });
+      newColumns.push({
+        title: "Total Revenue (₹)",
+        dataIndex: "totalRev",
+        key: "totalRev",
+        sorter: (a: any, b: any) => a["totalRev"] - b["totalRev"],
         sortDirections: ["descend", "ascend"],
         fixed: "right",
         width: 150,

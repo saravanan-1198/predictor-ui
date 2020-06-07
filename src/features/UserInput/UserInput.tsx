@@ -9,6 +9,8 @@ import {
   TreeSelect,
   message,
   Checkbox,
+  Row,
+  Col,
 } from "antd";
 import { Services } from "../../app/api/agent";
 import * as Moment from "moment";
@@ -39,6 +41,8 @@ export const UserInput = () => {
     setDateInput,
     setStoreCriteria,
     dateInput,
+    selectAllBranch,
+    setSelectAllBranch,
     setCategories,
     categories,
     predictionOutput,
@@ -64,9 +68,10 @@ export const UserInput = () => {
           setTreeData(resultCat);
           form.setFieldsValue({
             criteria: criteria,
-            branch: resultBranch[0].key,
+            branch: [resultBranch[0].key],
             categories: categories,
             selectAll: selectAll,
+            selectAllBranch: selectAllBranch,
           });
           setFormLoading(false);
         }
@@ -78,10 +83,11 @@ export const UserInput = () => {
     } else {
       form.setFieldsValue({
         criteria: criteria,
-        branch: branchList[0].key,
+        branch: [branchList[0].key],
         categories: categories,
         range: dateInput,
         selectAll: selectAll,
+        selectAllBranch: selectAllBranch,
       });
     }
 
@@ -204,7 +210,7 @@ export const UserInput = () => {
           value.range[1],
           value.criteria
         ),
-        branch: [value.branch],
+        branch: value.branch,
         category: generateCatInput(value.categories),
         years: generateCalendarInput(
           value.range[0],
@@ -212,6 +218,8 @@ export const UserInput = () => {
           value.criteria
         ),
       };
+      setSelectAll(value.selectAll);
+      setSelectAllBranch(value.selectAllBranch);
       setSelectAll(value.selectAll);
       setCategories(value.categories);
       setDateInput(value.range);
@@ -305,6 +313,16 @@ export const UserInput = () => {
     }
   };
 
+  const handleSelectAllBranch = (e: any) => {
+    if (e.target.checked) {
+      form.setFieldsValue({
+        branch: branchList.map((branch) => branch.key),
+      });
+    } else {
+      form.setFieldsValue({ branch: [] });
+    }
+  };
+
   return (
     <div>
       <PageHeader
@@ -356,13 +374,12 @@ export const UserInput = () => {
           >
             <TreeSelect {...tProps} />
           </Form.Item>
-          <Form.Item name="selectAll">
-            <Checkbox onChange={handleSelectAll}>
-              Select All Categories
-            </Checkbox>
-          </Form.Item>
-          <Form.Item label="Branch" name="branch">
-            <Select>
+          <Form.Item
+            label="Branch"
+            name="branch"
+            rules={[{ required: true, message: "Please select the branches" }]}
+          >
+            <Select mode="multiple" placeholder="Please Select Branches">
               {branchList.map((v: { key: number; name: string }) => (
                 <Option value={v.key} key={v.key}>
                   {v.name}
@@ -370,6 +387,22 @@ export const UserInput = () => {
               ))}
             </Select>
           </Form.Item>
+          <Row>
+            <Col span={12}>
+              <Form.Item name="selectAll">
+                <Checkbox onChange={handleSelectAll}>
+                  Select All Categories
+                </Checkbox>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="selectAllBranch">
+                <Checkbox onChange={handleSelectAllBranch}>
+                  Select All Branches
+                </Checkbox>
+              </Form.Item>
+            </Col>
+          </Row>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
               Predict
