@@ -456,7 +456,7 @@ const UserInput: React.FC<IProps> = ({ route }) => {
           </Row>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
-              {route === "/predict" ? "Make Prediction" : "Compare"}
+              Predict
             </Button>
           </Form.Item>
         </Form>
