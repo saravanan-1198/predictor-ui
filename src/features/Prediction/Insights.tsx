@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Days } from "../../app/models/days.enum";
-import { Input, Space, Button, Table } from "antd";
+import { Input, Space, Button, Table, Result } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import PredictionStore from "../../app/stores/prediction.store";
@@ -135,9 +135,11 @@ export const Insights = () => {
 
         data["date"] = new Date(
           insight.year,
-          insight.month,
+          insight.month - 1,
           insight.date
         ).toLocaleDateString("en-IN");
+
+        console.log(data["date"]);
 
         if (insightData.find((v) => v["date"] === data["date"])) return;
 
@@ -189,7 +191,7 @@ export const Insights = () => {
         columns={columns}
         pagination={{
           pageSize: pageSize,
-          pageSizeOptions: ["10", "20"],
+          pageSizeOptions: ["10", "50", "100"],
           showSizeChanger: true,
           onShowSizeChange: onPageSizeChange,
           position: ["bottomRight"],

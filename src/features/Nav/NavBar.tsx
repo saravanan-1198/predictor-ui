@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./NavBar.css";
-import { Layout, Menu, Button, message, Tooltip } from "antd";
+import { Layout, Menu, Button, message, Tooltip, Tag } from "antd";
 import { NavLink } from "react-router-dom";
 import { Routes } from "../../app/layout/Routes";
 import { observer } from "mobx-react-lite";
@@ -74,7 +74,11 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
           className="right"
         >
           <Tooltip title="Last Model Training">
-            <span>Last Training - {new Date(lastTraining).toUTCString()}</span>
+            <Tag key={0} color="default">
+              <span>
+                Last Training - {new Date(lastTraining).toUTCString()}
+              </span>
+            </Tag>
           </Tooltip>
         </Menu.Item>
       </Menu>

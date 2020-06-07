@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PageHeader, Space, Button, Input, Table, Tag } from "antd";
+import { PageHeader, Space, Button, Input, Table, Tag, message } from "antd";
 import CompareStore from "../../app/stores/compare.store";
 import {
   ArrowLeftOutlined,
@@ -9,6 +9,8 @@ import {
 import { observer } from "mobx-react-lite";
 import Highlighter from "react-highlight-words";
 import PredictionStore from "../../app/stores/prediction.store";
+import { Services } from "../../app/api/agent";
+import download from "downloadjs";
 
 let subFilterCategories: { text: string; value: string }[] = [];
 const subFilterCategoriesOriginal: { text: string; value: string }[] = [];
@@ -68,6 +70,8 @@ const CompareResult = () => {
 
   const [columns, setColumns] = useState<any[]>([]);
   const [pageSize, setPageSize] = useState(10);
+
+  const [loading, setLoading] = useState(false);
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -329,6 +333,20 @@ const CompareResult = () => {
     setPageSize(size);
   };
 
+  const handleDownloadCSV = async () => {
+    setLoading(true);
+    try {
+      const result = await Services.ExportService.exportCSV(tableDataCompare);
+      setLoading(false);
+      download(result, "Report.csv");
+    } catch (error) {
+      message.error(
+        "Server Error. Please try again later / report bug to admin"
+      );
+      setLoading(false);
+    }
+  };
+
   const handleOnTableChange = (
     pagination: any,
     filters: Record<string, React.ReactText[] | null>,
@@ -381,11 +399,20 @@ const CompareResult = () => {
           </Tag>,
         ]}
         onBack={() => {
-          toggleShowCompareForm(!showCompareForm);
+          toggleShowCompareForm(true);
+          setShowCompareResult(false);
         }}
-        backIcon={
-          showCompareForm ? <ArrowLeftOutlined /> : <ArrowRightOutlined />
-        }
+        backIcon={<ArrowLeftOutlined />}
+        extra={[
+          <Button
+            key="0"
+            type="primary"
+            onClick={handleDownloadCSV}
+            loading={loading}
+          >
+            Export
+          </Button>,
+        ]}
       />
       <Table
         dataSource={tableDataCompare}
@@ -394,7 +421,7 @@ const CompareResult = () => {
         style={{ margin: "0 20px" }}
         pagination={{
           pageSize: pageSize,
-          pageSizeOptions: ["10", "20"],
+          pageSizeOptions: ["10", "50", "100"],
           showSizeChanger: true,
           onShowSizeChange: onPageSizeChange,
           position: ["bottomRight"],

@@ -65,7 +65,7 @@ const PredictionResult: React.FC<IProps> = ({ setZeros }) => {
             onClick={handleDownloadCSV}
             loading={loading}
           >
-            Export Result
+            Export
           </Button>,
         ]}
       />

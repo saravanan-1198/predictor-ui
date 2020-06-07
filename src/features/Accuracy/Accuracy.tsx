@@ -283,7 +283,7 @@ const Accuracy = () => {
           onChange={handleOnTableChange}
           pagination={{
             pageSize: pageSize,
-            pageSizeOptions: ["10", "20", "30"],
+            pageSizeOptions: ["10", "50", "100"],
             onShowSizeChange: onPageSizeChange,
             showSizeChanger: true,
             position: ["bottomRight"],

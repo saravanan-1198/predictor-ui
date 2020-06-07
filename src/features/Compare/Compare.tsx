@@ -52,52 +52,42 @@ const Compare: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   return (
-    <Row>
+    <div>
       {showCompareForm && (
-        <Col span={7}>
-          <PageHeader
-            className="site-page-header"
-            title="Compare Input"
-            subTitle="Provide the inputs"
-          />
-          <Tabs
-            defaultActiveKey={compareMethod.toString()}
-            style={{ margin: "0 20px" }}
-          >
-            <TabPane tab="Input" key="0">
-              <UserInput route={history.location.pathname} />
-            </TabPane>
-            <TabPane tab="Upload" key="1">
-              <Spin spinning={loading}>
-                <Dragger {...props}>
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-                  <p className="ant-upload-text">
-                    Click or drag file to this area to upload
-                  </p>
-                  <p className="ant-upload-hint">
-                    Upload the exported .csv file of previous predictions to
-                    compare it with current predictions
-                  </p>
-                </Dragger>
-              </Spin>
-            </TabPane>
-          </Tabs>
-        </Col>
+        <Row>
+          <Col span={7}>
+            <PageHeader
+              className="site-page-header"
+              title="Compare Fly"
+              subTitle="Provide the inputs"
+            />
+            <UserInput route={history.location.pathname} />
+          </Col>
+          <Col span={17}>
+            <PageHeader
+              className="site-page-header"
+              title="Compare Upload"
+              subTitle="Upload the report"
+            />
+            <Spin spinning={loading}>
+              <Dragger {...props}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </p>
+                <p className="ant-upload-hint">
+                  Upload the exported .csv file of previous predictions to
+                  compare it with current predictions
+                </p>
+              </Dragger>
+            </Spin>
+          </Col>
+        </Row>
       )}
-
-      <Col span={showCompareForm ? 17 : 24}>
-        {showCompareResult ? (
-          <CompareResult />
-        ) : (
-          <div className="prediction-title">
-            <Title>Comparison</Title>
-            <Title level={4}>Make a comparison to view the results</Title>
-          </div>
-        )}
-      </Col>
-    </Row>
+      {showCompareResult && <CompareResult />}
+    </div>
   );
 };
 
