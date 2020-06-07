@@ -1,14 +1,19 @@
 export interface IPredictionOutput {
   branches: IBranch[];
-  holidays: string[];
-  weekdays: IWeekend;
+  insights: IInsight[];
   predictions: number;
   reads: number;
   writes: number;
 }
 
-interface IWeekend {
-  [key: string]: number;
+interface IInsight {
+  key: number;
+  year: number;
+  month: number;
+  date: number;
+  branch: number;
+  weekday: number;
+  isPublicHoliday: number;
 }
 
 interface IBranch {

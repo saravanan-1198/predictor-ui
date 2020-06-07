@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import "./Prediction.css";
 import { Row, Col, Typography } from "antd";
-import { UserInput } from "../UserInput/UserInput";
+import UserInput from "../UserInput/UserInput";
 import PredictionResult from "./PredictionResult";
 import PredictionStore from "../../app/stores/prediction.store";
 import { observer } from "mobx-react-lite";
@@ -21,7 +21,7 @@ const Prediction = () => {
     <Row>
       {showForm && (
         <Col span={7}>
-          <UserInput />
+          <UserInput route={"/predict"} />
         </Col>
       )}
 

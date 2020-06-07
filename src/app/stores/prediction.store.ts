@@ -8,14 +8,37 @@ import { IPredictionOutput } from "../models/prediction-output.model";
 configure({ enforceActions: "always" });
 
 class PredictionStore {
+  constructor() {
+    this.reset();
+  }
+
+  @action
+  reset = () => {
+    this.criteria = 0;
+    this.dateInput = [
+      moment(new Date(2020, 1, 3)),
+      moment(new Date(2020, 1, 5)),
+    ];
+    this.categories = [];
+    this.predictionOutput = undefined;
+    this.tableLoading = false;
+    this.showResult = false;
+    this.showForm = true;
+    this.branchList = [];
+    this.treeData = [];
+    this.linePlot = null;
+    this.piePlotQuantity = null;
+    this.piePlotRevenue = null;
+    this.FileUploadStatus = TrainingStatus.Pending;
+    this.PipelineInitiatedStatus = TrainingStatus.Pending;
+    this.TrainingCompletedStatus = TrainingStatus.Pending;
+    this.ModelReadyStatus = TrainingStatus.Pending;
+    this.tableData = [];
+    this.insightData = [];
+  };
+
   @observable
   criteria: number = 0;
-
-  @observable
-  selectAll: boolean = false;
-
-  @observable
-  selectAllBranch: boolean = false;
 
   @observable
   dateInput: Moment[] = [
@@ -58,6 +81,9 @@ class PredictionStore {
 
   @observable
   tableData: any[] = [];
+
+  @observable
+  insightData: any[] = [];
 
   @observable
   PipelineInitiatedStatus: TrainingStatus = TrainingStatus.Pending;
@@ -141,7 +167,7 @@ class PredictionStore {
       });
     });
 
-    return totalR.toFixed(2);
+    return Number.parseFloat(totalR.toFixed(2)).toLocaleString("en-IN");
   }
 
   @computed get pieDataRevenue() {
@@ -170,18 +196,13 @@ class PredictionStore {
   }
 
   @action
-  setSelectAll = (value: boolean) => {
-    this.selectAll = value;
-  };
-
-  @action
-  setSelectAllBranch = (value: boolean) => {
-    this.selectAllBranch = value;
-  };
-
-  @action
   setTableData = (data: any[]) => {
     this.tableData = data;
+  };
+
+  @action
+  setInsightData = (data: any[]) => {
+    this.insightData = data;
   };
 
   @action

@@ -58,6 +58,7 @@ const UserService = {
 const AssetService = {
   getBranches: () => requests.get("/branches"),
   getCategories: () => requests.get("/categories"),
+  getLastTraining: () => requests.get("/model"),
 };
 
 const PredictionService = {
@@ -66,8 +67,15 @@ const PredictionService = {
     requests.post("/predict", predictionInput),
 };
 
+const CompareService = {
+  getCompareFly: (compareInput: IPredictionInput) =>
+    requests.post("/compare/fly", compareInput),
+};
+
 const UploadService = {
   allowUpload: () => requests.get("/upload"),
+  FileUploadURL: `${axios.defaults.baseURL}/upload`,
+  CompareUploadURL: `${axios.defaults.baseURL}/compare/custom`,
 };
 
 const ExportService = {
@@ -81,4 +89,5 @@ export const Services = {
   AssetService,
   UploadService,
   ExportService,
+  CompareService,
 };

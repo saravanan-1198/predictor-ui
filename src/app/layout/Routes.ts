@@ -4,12 +4,14 @@ import FileUpload from "../../features/Upload/FileUpload";
 import { SignUpForm } from "../../features/SignUp/SignUpForm";
 import { LoadingComponent } from "./LoadingComponent";
 import Accuracy from "../../features/Accuracy/Accuracy";
+import Compare from "../../features/Compare/Compare";
 
 export const Routes: {
-  [id: string]: { component: React.FC; navKey: string };
+  [id: string]: { component: React.FC<any>; navKey: string };
 } = {
   "/": { component: Dashboard, navKey: "1" },
   "/predict": { component: Prediction, navKey: "2" },
+  "/compare": { component: Compare, navKey: "7" },
   "/upload": { component: FileUpload, navKey: "3" },
   "/user/create": { component: SignUpForm, navKey: "5" },
   "/accuracy": { component: Accuracy, navKey: "6" },

@@ -20,6 +20,9 @@ import {
   IPredictionInput,
 } from "../../app/models/prediction-input.model";
 import PredictionStore from "../../app/stores/prediction.store";
+import CompareStore from "../../app/stores/compare.store";
+import InputStore from "../../app/stores/input.store";
+import { observer } from "mobx-react-lite";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -27,7 +30,11 @@ const { SHOW_PARENT } = TreeSelect;
 
 const moment = extendMoment(Moment);
 
-export const UserInput = () => {
+interface IProps {
+  route: string;
+}
+
+const UserInput: React.FC<IProps> = ({ route }) => {
   const {
     setPredictionOutput,
     setTableLoading,
@@ -36,17 +43,32 @@ export const UserInput = () => {
     setBranchList,
     treeData,
     setTreeData,
-    setSelectAll,
-    selectAll,
     setDateInput,
     setStoreCriteria,
     dateInput,
-    selectAllBranch,
-    setSelectAllBranch,
     setCategories,
     categories,
     predictionOutput,
   } = useContext(PredictionStore);
+
+  const {
+    setCompareOuput,
+    setShowCompareResult,
+    compareOutput,
+    setCompareTableLoading,
+    setCompareMethod,
+  } = useContext(CompareStore);
+
+  const {
+    branchesDisabled,
+    categoriesDisabled,
+    setBranchesDiabled,
+    setCategoriesDiabled,
+    setBranchesSelectAll,
+    setCategoriesSelectAll,
+    branchesSelectAll,
+    categoriesSelectAll,
+  } = useContext(InputStore);
 
   const [form] = Form.useForm();
   const [criteria, setCriteria] = useState<number>(0);
@@ -70,8 +92,9 @@ export const UserInput = () => {
             criteria: criteria,
             branch: [resultBranch[0].key],
             categories: categories,
-            selectAll: selectAll,
-            selectAllBranch: selectAllBranch,
+            range: dateInput,
+            selectAll: categoriesSelectAll,
+            selectAllBranch: branchesSelectAll,
           });
           setFormLoading(false);
         }
@@ -86,23 +109,15 @@ export const UserInput = () => {
         branch: [branchList[0].key],
         categories: categories,
         range: dateInput,
-        selectAll: selectAll,
-        selectAllBranch: selectAllBranch,
+        selectAll: categoriesSelectAll,
+        selectAllBranch: branchesSelectAll,
       });
     }
 
     return () => {
       mounted = false;
     };
-  }, [
-    branchList,
-    criteria,
-    dateInput,
-    form,
-    treeData,
-    setBranchList,
-    setTreeData,
-  ]);
+  }, [criteria, dateInput, form, setBranchList, setTreeData]);
 
   const handleCriteriaChange = (value: number) => {
     setCriteria(value);
@@ -210,33 +225,60 @@ export const UserInput = () => {
           value.range[1],
           value.criteria
         ),
-        branch: value.branch,
-        category: generateCatInput(value.categories),
+        branch: branchesSelectAll
+          ? branchList.map((branch) => branch.key)
+          : value.branch,
+        category: generateCatInput(
+          categoriesSelectAll
+            ? [
+                "0-0",
+                "0-1",
+                "0-2",
+                "0-3",
+                "0-4",
+                "0-5",
+                "0-6",
+                "0-7",
+                "0-8",
+                "0-9",
+              ]
+            : value.categories
+        ),
         years: generateCalendarInput(
           value.range[0],
           value.range[1],
           value.criteria
         ),
       };
-      setSelectAll(value.selectAll);
-      setSelectAllBranch(value.selectAllBranch);
-      setSelectAll(value.selectAll);
       setCategories(value.categories);
       setDateInput(value.range);
       setStoreCriteria(value.criteria);
       setTableLoading(true);
       setLoading(true);
-      const result = await Services.PredictionService.getPrediction(input);
-      setPredictionOutput(result);
-      setLoading(false);
-      setTableLoading(false);
-      setShowResult(true);
+      if (route === "/predict") {
+        const result = await Services.PredictionService.getPrediction(input);
+        setPredictionOutput(result);
+        setLoading(false);
+        setTableLoading(false);
+        setShowResult(true);
+      } else {
+        setCompareMethod(1);
+        const result = await Services.CompareService.getCompareFly(input);
+        setCompareOuput(result);
+        setLoading(false);
+        setCompareTableLoading(false);
+        setShowCompareResult(true);
+      }
     } catch (error) {
       message.error("Server Error. Please try again later.");
       setLoading(false);
       setTableLoading(false);
+      setCompareTableLoading(false);
       if (predictionOutput) {
         setShowResult(true);
+      }
+      if (compareOutput) {
+        setShowCompareResult(true);
       }
     }
   };
@@ -295,41 +337,41 @@ export const UserInput = () => {
   const handleSelectAll = (e: any) => {
     if (e.target.checked) {
       form.setFieldsValue({
-        categories: [
-          "0-0",
-          "0-1",
-          "0-2",
-          "0-3",
-          "0-4",
-          "0-5",
-          "0-6",
-          "0-7",
-          "0-8",
-          "0-9",
-        ],
+        categories: ["All"],
       });
+      setCategoriesSelectAll(true);
+      setCategoriesDiabled(true);
     } else {
       form.setFieldsValue({ categories: [] });
+      setCategoriesSelectAll(false);
+      setCategoriesDiabled(false);
     }
   };
 
   const handleSelectAllBranch = (e: any) => {
     if (e.target.checked) {
       form.setFieldsValue({
-        branch: branchList.map((branch) => branch.key),
+        branch: ["All"],
+        // branch: branchList.map((branch) => branch.key),
       });
+      setBranchesSelectAll(true);
+      setBranchesDiabled(true);
     } else {
-      form.setFieldsValue({ branch: [] });
+      form.setFieldsValue({ branch: [1] });
+      setBranchesSelectAll(false);
+      setBranchesDiabled(false);
     }
   };
-
   return (
     <div>
-      <PageHeader
-        className="site-page-header"
-        title="Prediction Input"
-        subTitle="Provide the inputs"
-      />
+      {route === "/predict" && (
+        <PageHeader
+          className="site-page-header"
+          title="Prediction Input"
+          subTitle="Provide the inputs"
+        />
+      )}
+
       <Spin spinning={formLoading}>
         <Form
           form={form}
@@ -354,7 +396,6 @@ export const UserInput = () => {
                 format="DD-MM-YYYY"
                 inputReadOnly={true}
                 style={{ width: "100%" }}
-                onChange={(v) => console.log(v)}
               />
             ) : (
               <RangePicker
@@ -372,14 +413,18 @@ export const UserInput = () => {
               { required: true, message: "Please select the categories" },
             ]}
           >
-            <TreeSelect {...tProps} />
+            <TreeSelect disabled={categoriesDisabled} {...tProps} />
           </Form.Item>
           <Form.Item
             label="Branch"
             name="branch"
             rules={[{ required: true, message: "Please select the branches" }]}
           >
-            <Select mode="multiple" placeholder="Please Select Branches">
+            <Select
+              disabled={branchesDisabled}
+              mode="multiple"
+              placeholder="Please Select Branches"
+            >
               {branchList.map((v: { key: number; name: string }) => (
                 <Option value={v.key} key={v.key}>
                   {v.name}
@@ -390,14 +435,20 @@ export const UserInput = () => {
           <Row>
             <Col span={12}>
               <Form.Item name="selectAll">
-                <Checkbox onChange={handleSelectAll}>
+                <Checkbox
+                  value={categoriesSelectAll}
+                  onChange={handleSelectAll}
+                >
                   Select All Categories
                 </Checkbox>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="selectAllBranch">
-                <Checkbox onChange={handleSelectAllBranch}>
+                <Checkbox
+                  value={branchesSelectAll}
+                  onChange={handleSelectAllBranch}
+                >
                   Select All Branches
                 </Checkbox>
               </Form.Item>
@@ -413,3 +464,5 @@ export const UserInput = () => {
     </div>
   );
 };
+
+export default observer(UserInput);
