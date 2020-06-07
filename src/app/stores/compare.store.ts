@@ -37,11 +37,9 @@ class CompareStore {
 
   @computed get totalAccuracy() {
     const totalAccuracy =
-      100 *
-      (Number.parseFloat(this.totalPredictedRevenue) /
-        Number.parseFloat(this.totalActualRevenue));
+      100 * (this.totalPredictedRevenue / this.totalActualRevenue);
 
-    return Number.parseFloat(totalAccuracy.toFixed(2)).toLocaleString("en-IN");
+    return totalAccuracy;
   }
 
   @computed get totalErrorRevenue() {
@@ -53,7 +51,7 @@ class CompareStore {
       });
     });
 
-    return Number.parseFloat(totalErrorR.toFixed(2)).toLocaleString("en-IN");
+    return totalErrorR;
   }
 
   @computed get totalActualRevenue() {
@@ -65,7 +63,7 @@ class CompareStore {
       });
     });
 
-    return Number.parseFloat(totalActualR.toFixed(2)).toLocaleString("en-IN");
+    return totalActualR;
   }
 
   @computed get totalPredictedRevenue() {
@@ -77,7 +75,7 @@ class CompareStore {
       });
     });
 
-    return Number.parseFloat(totalR.toFixed(2)).toLocaleString("en-IN");
+    return totalR;
   }
 
   @action

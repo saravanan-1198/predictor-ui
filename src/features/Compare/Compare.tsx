@@ -54,22 +54,25 @@ const Compare: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <div>
       {showCompareForm && (
-        <Row>
-          <Col span={7}>
-            <PageHeader
-              className="site-page-header"
-              title="Compare Fly"
-              subTitle="Provide the inputs"
-            />
-            <UserInput route={history.location.pathname} />
-          </Col>
-          <Col span={17}>
-            <PageHeader
-              className="site-page-header"
-              title="Compare Upload"
-              subTitle="Upload the report"
-            />
-            <Spin spinning={loading}>
+        <Spin spinning={loading}>
+          <Row>
+            <Col span={7}>
+              <PageHeader
+                className="site-page-header"
+                title="Compare Fly"
+                subTitle="Provide the inputs"
+              />
+              <UserInput
+                route={history.location.pathname}
+                setCompareLoading={setLoading}
+              />
+            </Col>
+            <Col span={17}>
+              <PageHeader
+                className="site-page-header"
+                title="Compare Upload"
+                subTitle="Upload the report"
+              />
               <Dragger {...props}>
                 <p className="ant-upload-drag-icon">
                   <InboxOutlined />
@@ -82,9 +85,9 @@ const Compare: React.FC<RouteComponentProps> = ({ history }) => {
                   compare it with current predictions
                 </p>
               </Dragger>
-            </Spin>
-          </Col>
-        </Row>
+            </Col>
+          </Row>
+        </Spin>
       )}
       {showCompareResult && <CompareResult />}
     </div>

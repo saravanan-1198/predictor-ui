@@ -21,7 +21,7 @@ const Prediction = () => {
     <Row>
       {showForm && (
         <Col span={7}>
-          <UserInput route={"/predict"} />
+          <UserInput route={"/predict"} setCompareLoading={undefined} />
         </Col>
       )}
 

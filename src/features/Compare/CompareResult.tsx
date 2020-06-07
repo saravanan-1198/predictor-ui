@@ -386,16 +386,25 @@ const CompareResult = () => {
         title="Compare Result"
         tags={[
           <Tag key={3} color="orange">
-            Revenue Accuracy - {totalAccuracy}%
+            Revenue Accuracy - {totalAccuracy.toFixed(2)}%
           </Tag>,
           <Tag key={0} color="blue">
-            Predicted Revenue - ₹{totalPredictedRevenue}
+            Predicted Revenue - ₹
+            {Number.parseFloat(totalPredictedRevenue.toFixed(2)).toLocaleString(
+              "en-IN"
+            )}
           </Tag>,
           <Tag key={1} color="green">
-            Actual Revenue - ₹{totalActualRevenue}
+            Actual Revenue - ₹
+            {Number.parseFloat(totalActualRevenue.toFixed(2)).toLocaleString(
+              "en-IN"
+            )}
           </Tag>,
           <Tag key={2} color="red">
-            Revenue Error - ₹{totalErrorRevenue}
+            Revenue Error - ₹
+            {Number.parseFloat(totalErrorRevenue.toFixed(2)).toLocaleString(
+              "en-IN"
+            )}
           </Tag>,
         ]}
         onBack={() => {

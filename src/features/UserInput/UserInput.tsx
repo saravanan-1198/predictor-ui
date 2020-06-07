@@ -32,9 +32,10 @@ const moment = extendMoment(Moment);
 
 interface IProps {
   route: string;
+  setCompareLoading: any;
 }
 
-const UserInput: React.FC<IProps> = ({ route }) => {
+const UserInput: React.FC<IProps> = ({ route, setCompareLoading }) => {
   const {
     setPredictionOutput,
     setTableLoading,
@@ -106,7 +107,7 @@ const UserInput: React.FC<IProps> = ({ route }) => {
     } else {
       form.setFieldsValue({
         criteria: criteria,
-        branch: [branchList[0].key],
+        branch: [branchesSelectAll ? "All" : branchList[0].key],
         categories: categories,
         range: dateInput,
         selectAll: categoriesSelectAll,
@@ -262,23 +263,30 @@ const UserInput: React.FC<IProps> = ({ route }) => {
         setTableLoading(false);
         setShowResult(true);
       } else {
+        setCompareLoading(true);
         setCompareMethod(1);
         const result = await Services.CompareService.getCompareFly(input);
         setCompareOuput(result);
         setLoading(false);
+        setCompareLoading(false);
         setCompareTableLoading(false);
         setShowCompareResult(true);
       }
     } catch (error) {
-      message.error("Server Error. Please try again later.");
+      console.log(error);
+      if (error.response.status >= 400 || error.response.status < 500) {
+        message.error(error.response.data);
+      } else {
+        message.error(
+          "Server Error. Please try again later / Report to admin."
+        );
+      }
       setLoading(false);
       setTableLoading(false);
       setCompareTableLoading(false);
+      setCompareLoading(false);
       if (predictionOutput) {
         setShowResult(true);
-      }
-      if (compareOutput) {
-        setShowCompareResult(true);
       }
     }
   };
@@ -456,7 +464,7 @@ const UserInput: React.FC<IProps> = ({ route }) => {
           </Row>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
-              Predict
+              {route === "/predict" ? "Predict" : "Compare"}
             </Button>
           </Form.Item>
         </Form>
