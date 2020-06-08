@@ -168,71 +168,95 @@ const CompareResult = () => {
           fixed: "left",
         },
         {
-          title: "Quantity",
-          dataIndex: "quantity",
-          key: "quantity",
-          sorter: (a: any, b: any) => a["quantity"] - b["quantity"],
-          sortDirections: ["descend", "ascend"],
-          width: 160,
+          title: "Predicted",
+          children: [
+            {
+              title: "Quantity",
+              dataIndex: "quantity",
+              key: "quantity",
+              sorter: (a: any, b: any) => a["quantity"] - b["quantity"],
+              sortDirections: ["descend", "ascend"],
+              width: 160,
+            },
+            {
+              title: "Revenue",
+              dataIndex: "revenue",
+              key: "revenue",
+              sorter: (a: any, b: any) => a["revenue"] - b["revenue"],
+              sortDirections: ["descend", "ascend"],
+              width: 160,
+            },
+          ],
         },
         {
-          title: "Revenue",
-          dataIndex: "revenue",
-          key: "revenue",
-          sorter: (a: any, b: any) => a["revenue"] - b["revenue"],
-          sortDirections: ["descend", "ascend"],
-          width: 160,
+          title: "Actual",
+          children: [
+            {
+              title: "Quantity",
+              dataIndex: "actual_quantity",
+              key: "actual_quantity",
+              sorter: (a: any, b: any) =>
+                a["actual_quantity"] - b["actual_quantity"],
+              sortDirections: ["descend", "ascend"],
+              width: 160,
+            },
+            {
+              title: "Revenue",
+              dataIndex: "actual_revenue",
+              key: "actual_revenue",
+              sorter: (a: any, b: any) =>
+                a["actual_revenue"] - b["actual_revenue"],
+              sortDirections: ["descend", "ascend"],
+              width: 160,
+            },
+          ],
         },
         {
-          title: "Actual Quantity",
-          dataIndex: "actual_quantity",
-          key: "actual_quantity",
-          sorter: (a: any, b: any) =>
-            a["actual_quantity"] - b["actual_quantity"],
-          sortDirections: ["descend", "ascend"],
-          width: 160,
+          title: "Accuracy",
+          children: [
+            {
+              title: "Quantity",
+              dataIndex: "quantity_accuracy",
+              key: "quantity_accuracy",
+              sorter: (a: any, b: any) =>
+                a["quantity_accuracy"] - b["quantity_accuracy"],
+              sortDirections: ["descend", "ascend"],
+              width: 160,
+            },
+            {
+              title: "Revenue",
+              dataIndex: "revenue_accuracy",
+              key: "revenue_accuracy",
+              sorter: (a: any, b: any) =>
+                a["revenue_accuracy"] - b["revenue_accuracy"],
+              sortDirections: ["descend", "ascend"],
+              width: 160,
+            },
+          ],
         },
         {
-          title: "Actual Revenue",
-          dataIndex: "actual_revenue",
-          key: "actual_revenue",
-          sorter: (a: any, b: any) => a["actual_revenue"] - b["actual_revenue"],
-          sortDirections: ["descend", "ascend"],
-          width: 160,
-        },
-        {
-          title: "Quantity Accuracy",
-          dataIndex: "quantity_accuracy",
-          key: "quantity_accuracy",
-          sorter: (a: any, b: any) =>
-            a["quantity_accuracy"] - b["quantity_accuracy"],
-          sortDirections: ["descend", "ascend"],
-          width: 160,
-        },
-        {
-          title: "Quantity Error",
-          dataIndex: "quantity_error",
-          key: "quantity_error",
-          sorter: (a: any, b: any) => a["quantity_error"] - b["quantity_error"],
-          sortDirections: ["descend", "ascend"],
-          width: 160,
-        },
-        {
-          title: "Revenue Accuracy",
-          dataIndex: "revenue_accuracy",
-          key: "revenue_accuracy",
-          sorter: (a: any, b: any) =>
-            a["revenue_accuracy"] - b["revenue_accuracy"],
-          sortDirections: ["descend", "ascend"],
-          width: 160,
-        },
-        {
-          title: "Revenue Error",
-          dataIndex: "revenue_error",
-          key: "revenue_error",
-          sorter: (a: any, b: any) => a["revenue_error"] - b["revenue_error"],
-          sortDirections: ["descend", "ascend"],
-          width: 160,
+          title: "Error",
+          children: [
+            {
+              title: "Quantity",
+              dataIndex: "quantity_error",
+              key: "quantity_error",
+              sorter: (a: any, b: any) =>
+                a["quantity_error"] - b["quantity_error"],
+              sortDirections: ["descend", "ascend"],
+              width: 160,
+            },
+
+            {
+              title: "Revenue",
+              dataIndex: "revenue_error",
+              key: "revenue_error",
+              sorter: (a: any, b: any) =>
+                a["revenue_error"] - b["revenue_error"],
+              sortDirections: ["descend", "ascend"],
+              width: 160,
+            },
+          ],
         },
       ];
 
