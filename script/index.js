@@ -2,7 +2,7 @@ var exec = require("child_process").exec;
 var fs = require("fs");
 
 exec(
-  'gcr.io/cloud-builders/gcloud secrets versions access latest --secret="Firebase_Auth_JSON"',
+  'gcloud secrets versions access latest --secret="Firebase_Auth_JSON"',
   (err, out) => {
     console.log(err);
     fs.writeFileSync(
