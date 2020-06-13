@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./Home.css";
 import { Layout, Modal } from "antd";
 import Prediction from "../../features/Prediction/Prediction";
@@ -21,10 +21,18 @@ const { confirm } = Modal;
 const { Content } = Layout;
 
 export const Home: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const { logout, isAdminUser, reset: appRestore } = useContext(AppStore);
+  const { logout, isAdminUser, reset: appRestore, isVerfiedUser } = useContext(
+    AppStore
+  );
   const { reset: predictionRestore } = useContext(PredictionStore);
   const { reset: compareRestore } = useContext(CompareStore);
   const { reset: inputRestore } = useContext(InputStore);
+
+  useEffect(() => {
+    if (!isVerfiedUser) {
+      history.push("/verify");
+    }
+  }, []);
 
   const handleLogout = () => {
     confirm({

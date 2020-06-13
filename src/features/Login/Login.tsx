@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./Login.css";
 import {
   Layout,
@@ -12,21 +12,28 @@ import {
 import { RouteComponentProps } from "react-router-dom";
 import AppStore from "../../app/stores/app.store";
 import { observer } from "mobx-react-lite";
+import firebase from "firebase";
 
 const { Content, Footer } = Layout;
 
 const Login: React.FC<RouteComponentProps> = ({ history }) => {
-  const { login, loggingIn } = useContext(AppStore);
+  const { gcpLogin, loggingIn, isAuthenticated } = useContext(AppStore);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.push("/verify");
+    }
+  }, []);
 
   const onFinish = async (values: any) => {
-    const success = await login(values.email, values.password);
-
-    if (success) {
+    const success = await gcpLogin(values.email, values.password);
+    if (firebase.auth().currentUser?.emailVerified)
       notification["success"]({
         message: "Login Successful",
         description:
           "Welcome back to Predictor UI. Hope our predictions help you in managing your business. Help us improve our predictions by uploading your past sales record",
       });
+    if (success) {
       history.push("/");
     }
   };
