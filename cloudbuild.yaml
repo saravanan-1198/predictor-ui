@@ -1,8 +1,14 @@
 steps:
   - name: "gcr.io/cloud-builders/npm"
     args: ["install"]
-  - name: "gcr.io/cloud-builders/npm"
+  - name: "gcr.io/cloud-builders/gcloud"
     entrypoint: bash
+    args:
+      [
+        "-c",
+        'gcloud secrets versions access latest --secret="Firebase_Auth_JSON" > test.json',
+      ]
+  - name: "gcr.io/cloud-builders/npm"
     args: ["run", "build"]
   - name: "gcr.io/cloud-builders/gcloud"
     args: ["app", "deploy"]
