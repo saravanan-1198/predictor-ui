@@ -1,7 +1,7 @@
 steps:
   - name: "gcr.io/cloud-builders/npm"
     args: ["install"]
-  - name: "gcr.io/cloud-builders/gcloud"
+  - name: "gcr.io/cloud-builders/npm"
     entrypoint: bash
     args: ["npm", "run", "build"]
   - name: "gcr.io/cloud-builders/gcloud"
