@@ -3,8 +3,8 @@ import { history } from "../../index";
 import { IPredictionInput } from "../models/prediction-input.model";
 import { message } from "antd";
 
-axios.defaults.baseURL = "http://localhost:5000/api";
-// axios.defaults.baseURL = "https://salesprediction.el.r.appspot.com/api";
+// axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.baseURL = "https://salesprediction.el.r.appspot.com/api";
 
 axios.interceptors.response.use(undefined, (error) => {
   if (error.response.status === 404) {
