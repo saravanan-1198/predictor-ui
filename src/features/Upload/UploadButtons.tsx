@@ -19,7 +19,7 @@ export const UploadButtons = () => {
 
   const props = {
     name: "file",
-    accept: ".csv",
+    accept: ".xls",
     multiple: false,
     action: Services.UploadService.FileUploadURL,
     headers: { "x-auth-token": localStorage.getItem("x-auth-token") ?? "" },
@@ -93,7 +93,7 @@ export const UploadButtons = () => {
               <InboxOutlined />
             </p>
             <p className="ant-upload-text">
-              Click or drag file to this area to upload (.csv)
+              Click or drag file to this area to upload (.xls)
             </p>
             <p className="ant-upload-hint">
               Please bare with us, due to technical reasons, we allow uploading
