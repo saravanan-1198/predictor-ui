@@ -5,11 +5,11 @@ import { RouteComponentProps } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 const VerifiedUser: React.FC<RouteComponentProps> = ({ history }) => {
-  const { isVerfiedUser, sendPasswordUpdate, logout } = useContext(AppStore);
+  const { isVerified, sendPasswordUpdate, logout } = useContext(AppStore);
   const [disable, setDisable] = useState(false);
 
   useEffect(() => {
-    if (isVerfiedUser) {
+    if (isVerified) {
       history.push("/");
     }
   }, []);

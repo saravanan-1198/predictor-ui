@@ -1,4 +1,4 @@
-import { Dashboard } from "../../features/Dashboard/Dashboard";
+import Dashboard from "../../features/Dashboard/Dashboard";
 import Prediction from "../../features/Prediction/Prediction";
 import FileUpload from "../../features/Upload/FileUpload";
 import { SignUpForm } from "../../features/SignUp/SignUpForm";

@@ -8,12 +8,18 @@ import AppStore from "../stores/app.store";
 import { observer } from "mobx-react-lite";
 import firebase from "firebase";
 import VerifiedUser from "../../features/VerfiedUser/VerifiedUser";
-import { message, notification } from "antd";
+import { message, notification, PageHeader, Layout, Typography } from "antd";
+
+const { Content, Footer } = Layout;
+const { Title, Text } = Typography;
 
 const App = () => {
-  const { isAuthenticated, setToken, sendPasswordUpdate } = useContext(
-    AppStore
-  );
+  const {
+    isAuthenticated,
+    setToken,
+    sendPasswordUpdate,
+    setIsVerified,
+  } = useContext(AppStore);
 
   useEffect(() => {
     const authListener = firebase
@@ -22,6 +28,8 @@ const App = () => {
         if (user) {
           const token = await firebase.auth().currentUser?.getIdToken();
           setToken(token);
+          const isVerfied = await firebase.auth().currentUser?.emailVerified;
+          setIsVerified(isVerfied);
           if (!firebase.auth().currentUser?.emailVerified) {
             try {
               sendPasswordUpdate();
@@ -41,19 +49,42 @@ const App = () => {
   }, []);
 
   return (
-    <Switch>
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/loader" component={LoadingComponent} />
-      <Route exact path="/verify" component={VerifiedUser} />
-      <ProtectedRoute
-        path="/"
-        component={Home}
-        isAuthenticated={() => isAuthenticated}
-        // isAuthenticated={() => isAuthenticated}
-        redirectPath={"/login"}
-        // redirectPath="/login"
-      />
-    </Switch>
+    <React.Fragment>
+      <div className="noDisplay">
+        <Layout style={{ height: "100vh", padding: 15 }}>
+          <Content style={{ background: "#fff", height: "100%" }}>
+            <div>
+              <PageHeader
+                title="Predictor UI"
+                subTitle="A Sales Prediction Tool"
+              />
+              <div className="center">
+                <Title className="title">Not Compatible</Title>
+                <Text style={{ opacity: 0.5 }}>
+                  The app will work only on large screens. We're working on
+                  making it responsive. Please bare with us.
+                </Text>
+              </div>
+            </div>
+          </Content>
+        </Layout>
+      </div>
+      <div className="mainApp">
+        <Switch>
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/loader" component={LoadingComponent} />
+          <Route exact path="/verify" component={VerifiedUser} />
+          <ProtectedRoute
+            path="/"
+            component={Home}
+            isAuthenticated={() => isAuthenticated}
+            // isAuthenticated={() => isAuthenticated}
+            redirectPath={"/login"}
+          />{" "}
+          // redirectPath="/login"
+        </Switch>
+      </div>
+    </React.Fragment>
   );
 };
 

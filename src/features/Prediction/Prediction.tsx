@@ -25,7 +25,7 @@ const Prediction = () => {
         </Col>
       )}
 
-      <Col span={showForm ? 17 : 24}>
+      <Col span={showForm ? 17 : 24} className="pre-parent">
         {showResult ? (
           <PredictionResult setZeros={handleZeroValues} />
         ) : zeros ? (
