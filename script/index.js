@@ -3,7 +3,7 @@ var fs = require("fs");
 var axios = require("axios");
 var key = "s3cr3tEncrypt1onKey";
 var decryptor = require("simple-encryptor")(key);
-axios.get("http://localhost:5000/api/secret",{
+axios.get("https://salesprediction.el.r.appspot.com/api/secret",{
   headers: {
     "secret": "bypassKeyForSecret"
   }
