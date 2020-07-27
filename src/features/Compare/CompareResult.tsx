@@ -1,11 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PageHeader, Space, Button, Input, Table, Tag, message } from "antd";
 import CompareStore from "../../app/stores/compare.store";
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { ArrowLeftOutlined, SearchOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import Highlighter from "react-highlight-words";
 import PredictionStore from "../../app/stores/prediction.store";
@@ -56,11 +52,11 @@ const defaultColumns: any[] = [
 const CompareResult = () => {
   const {
     toggleShowCompareForm,
-    showCompareForm,
     setTableDataCompare,
     tableDataCompare,
     setShowCompareResult,
     totalAccuracy,
+    errorPercentage,
     totalActualRevenue,
     totalErrorRevenue,
     totalPredictedRevenue,
@@ -409,6 +405,9 @@ const CompareResult = () => {
         className="site-page-header"
         title="Compare Result"
         tags={[
+          <Tag key={3} color="default">
+            Error Percentage - {errorPercentage.toFixed(2)}%
+          </Tag>,
           <Tag key={3} color="orange">
             Revenue Accuracy - {totalAccuracy.toFixed(2)}%
           </Tag>,

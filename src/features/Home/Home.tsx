@@ -4,7 +4,7 @@ import { Layout, Modal } from "antd";
 import Prediction from "../../features/Prediction/Prediction";
 import FileUpload from "../../features/Upload/FileUpload";
 import { Switch, Route, RouteComponentProps } from "react-router-dom";
-import { Dashboard } from "../../features/Dashboard/Dashboard";
+import Dashboard from "../../features/Dashboard/Dashboard";
 import { SignUpForm } from "../SignUp/SignUpForm";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import NavBar from "../Nav/NavBar";
@@ -17,19 +17,21 @@ import PredictionStore from "../../app/stores/prediction.store";
 import CompareStore from "../../app/stores/compare.store";
 import InputStore from "../../app/stores/input.store";
 import predictionStore from "../../app/stores/prediction.store";
+import dashboardStore from "../../app/stores/dashboard.store";
 const { confirm } = Modal;
 const { Content } = Layout;
 
 export const Home: React.FC<RouteComponentProps> = ({ history, location }) => {
-  const { logout, isAdminUser, reset: appRestore, isVerfiedUser } = useContext(
-    AppStore
+  const { logout, isAdminUser, reset: appRestore, isVerified } = useContext(
+    AppStore,
   );
   const { reset: predictionRestore } = useContext(PredictionStore);
   const { reset: compareRestore } = useContext(CompareStore);
   const { reset: inputRestore } = useContext(InputStore);
+  const { reset: dashbaordRestore } = useContext(dashboardStore);
 
   useEffect(() => {
-    if (!isVerfiedUser) {
+    if (!isVerified) {
       history.push("/verify");
     }
   }, []);
@@ -45,6 +47,7 @@ export const Home: React.FC<RouteComponentProps> = ({ history, location }) => {
         predictionRestore();
         compareRestore();
         inputRestore();
+        dashbaordRestore();
         setTimeout(() => {
           history.push("/login");
         }, 3000);
@@ -55,10 +58,10 @@ export const Home: React.FC<RouteComponentProps> = ({ history, location }) => {
   };
 
   return (
-    <Layout className="site-layout">
+    <Layout>
       <NavBar handleLogout={handleLogout} currentPath={location.pathname} />
-      <Content style={{ margin: "0 16px" }}>
-        <div className="site-layout-background" style={{ padding: 24 }}>
+      <Content style={{ margin: 16, background: "#fff", minHeight: "88vh" }}>
+        <div style={{ padding: 24 }}>
           <Switch>
             <Route exact path="/upload" component={FileUpload} />
             <Route exact path="/predict" component={Prediction} />

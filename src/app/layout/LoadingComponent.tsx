@@ -3,8 +3,15 @@ import { Spin } from "antd";
 
 export const LoadingComponent = () => {
   return (
-    <Spin className="center-spinner" size="large">
-      <div className="loader" />
-    </Spin>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+      }}
+    >
+      <Spin size="large"></Spin>
+    </div>
   );
 };

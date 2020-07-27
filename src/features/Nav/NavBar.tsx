@@ -7,6 +7,7 @@ import { observer } from "mobx-react-lite";
 import AppStore from "../../app/stores/app.store";
 import { Services } from "../../app/api/agent";
 import { Days } from "../../app/models/days.enum";
+import dashboardStore from "../../app/stores/dashboard.store";
 const { Header } = Layout;
 
 interface IProps {
@@ -16,7 +17,7 @@ interface IProps {
 
 const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
   const { isAdminUser } = useContext(AppStore);
-  const [lastTraining, setLastTraining] = useState("");
+  const { lastTraining, setLastTraining } = useContext(dashboardStore);
 
   useEffect(() => {
     loadModelTrainingDateTime();
@@ -36,11 +37,9 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
       <div className="logo">Predictor UI</div>
       <Menu
         mode="horizontal"
-        selectedKeys={
-          Object.keys(Routes).includes(currentPath)
-            ? [Routes[currentPath].navKey]
-            : []
-        }
+        selectedKeys={Object.keys(Routes).includes(currentPath)
+          ? [Routes[currentPath].navKey]
+          : []}
       >
         <Menu.Item key="1">
           <NavLink to="/">Dashboard</NavLink>

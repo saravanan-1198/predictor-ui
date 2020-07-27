@@ -29,14 +29,14 @@ const FileUpload = () => {
 
   return (
     <div>
-      <Row style={{ margin: "0 20px", height: "60vh" }}>
+      <Row style={{ margin: "0 20px", height: "70vh" }}>
         <Col span={14}>
           <PageHeader
             className="site-page-header"
             title="Upload Data"
             subTitle="Help us improve our predictions"
           />
-          <div style={{ width: "100%", height: "90%" }}>
+          <div style={{ width: "100%", height: "100%" }}>
             <UploadButtons />
           </div>
         </Col>
@@ -46,12 +46,15 @@ const FileUpload = () => {
             title="Training Timeline"
             subTitle=""
           />
-          <Card style={{ margin: "0 10px", height: "90%" }}>
+          <Card
+            style={{ margin: "0 10px", height: "100%", position: "relative" }}
+          >
             <Timeline
               style={{
-                marginLeft: "50%",
-                marginTop: "50%",
-                transform: "translateX(-30%) translateY(-50%)",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translateX(-50%) translateY(-50%)",
               }}
             >
               <Timeline.Item
