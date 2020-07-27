@@ -54,9 +54,9 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
         <Menu.Item key="3">
           <NavLink to="/upload">Upload</NavLink>
         </Menu.Item>
-        <Menu.Item key="6">
+        {/* <Menu.Item key="6">
           <NavLink to="/accuracy">Accuracy</NavLink>
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item key="5" className="right" disabled>
           <Button type="primary" onClick={handleLogout} htmlType="submit">
             Logout
