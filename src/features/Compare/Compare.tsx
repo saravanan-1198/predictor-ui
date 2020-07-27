@@ -1,23 +1,19 @@
 import React, { useContext, useState } from "react";
-import { Row, Col, PageHeader, Tabs, Typography, message, Spin } from "antd";
+import { Row, Col, PageHeader, message, Spin } from "antd";
 import UserInput from "../UserInput/UserInput";
 import { RouteComponentProps } from "react-router-dom";
-import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
+import { InboxOutlined } from "@ant-design/icons";
 import Dragger from "antd/lib/upload/Dragger";
 import CompareStore from "../../app/stores/compare.store";
 import CompareResult from "./CompareResult";
 import { observer } from "mobx-react-lite";
 import { Services } from "../../app/api/agent";
 
-const { TabPane } = Tabs;
-const { Title } = Typography;
-
 const Compare: React.FC<RouteComponentProps> = ({ history }) => {
   const {
     showCompareForm,
     showCompareResult,
     setCompareOuput,
-    compareMethod,
     setCompareMethod,
     setCompareTableLoading,
     setShowCompareResult,
@@ -29,6 +25,7 @@ const Compare: React.FC<RouteComponentProps> = ({ history }) => {
     action: Services.UploadService.CompareUploadURL,
     accept: ".csv",
     height: 450,
+    headers: { "x-auth-token": localStorage.getItem("x-auth-token") ?? "" },
     onChange(info: any) {
       if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);

@@ -17,7 +17,8 @@ class AppStore {
     this.reset();
   }
 
-  @action setToken = (token: string | undefined) => {
+  @action
+  setToken = (token: string | undefined) => {
     this.loggingIn = false;
     if (token) {
       localStorage.setItem(authTokenKey, token);
@@ -28,30 +29,50 @@ class AppStore {
     }
   };
 
-  @action reset = () => {
+  @action
+  reset = () => {
     this.token = localStorage.getItem(authTokenKey);
     this.loggingIn = false;
   };
 
-  @observable token: string | null = localStorage.getItem(authTokenKey);
+  @observable
+  token: string | null = localStorage.getItem(authTokenKey);
 
-  @observable loggingIn: boolean = false;
+  @observable
+  loggingIn: boolean = false;
 
-  @computed get isAuthenticated() {
+  @computed
+  get isAuthenticated() {
     return this.token ? true : false;
   }
 
-  get isVerfiedUser() {
-    firebase.auth().currentUser?.reload();
-    const result = firebase.auth().currentUser?.emailVerified;
-    return result;
-  }
+  getVerfiedFromStorage = () => {
+    if (localStorage.getItem("Verified")) {
+      return localStorage.getItem("Verified") === "true" ? true : false;
+    }
+
+    return false;
+  };
+
+  @observable
+  isVerified = this.getVerfiedFromStorage();
+
+  @action
+  setIsVerified = (val: boolean | undefined) => {
+    if (val === undefined) {
+      val = false;
+    }
+    this.isVerified = val;
+    const strVal = val ? "true" : "false";
+    localStorage.setItem("Verified", strVal);
+  };
 
   // get isVerifiedUser() {
   //   return firebase.auth().currentUser?.emailVerified;
   // }
 
-  @computed get isAdminUser() {
+  @computed
+  get isAdminUser() {
     const payload = jwt.decode(this.token!);
     let obj = payload as {
       [key: string]: any;
@@ -59,16 +80,17 @@ class AppStore {
     return obj["isAdmin"];
   }
 
-  @action setLoggingIn = (value: boolean) => {};
+  @action
+  setLoggingIn = (value: boolean) => {};
 
-  @action gcpLogin = async (
-    email: string,
-    password: string
-  ): Promise<boolean> => {
+  @action
+  gcpLogin = async (email: string, password: string): Promise<boolean> => {
     try {
       this.loggingIn = true;
       await firebase.auth().signInWithEmailAndPassword(email, password);
       return runInAction("Login", async () => {
+        const verfi = firebase.auth().currentUser?.emailVerified;
+        this.setIsVerified(verfi);
         this.loggingIn = false;
         return true;
       });
@@ -94,7 +116,8 @@ class AppStore {
     if (mail) firebase.auth().sendPasswordResetEmail(mail);
   };
 
-  @action login = async (email: string, password: string): Promise<boolean> => {
+  @action
+  login = async (email: string, password: string): Promise<boolean> => {
     try {
       const token = await Services.AuthService.login({ email, password });
       return runInAction("Login", () => {
@@ -124,11 +147,13 @@ class AppStore {
     }
   };
 
-  @action logout = async () => {
+  @action
+  logout = async () => {
     await firebase.auth().signOut();
     runInAction("Signout", () => {
       this.token = null;
       localStorage.removeItem(authTokenKey);
+      localStorage.removeItem("Verified");
     });
   };
 }

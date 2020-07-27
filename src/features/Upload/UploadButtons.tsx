@@ -22,6 +22,7 @@ export const UploadButtons = () => {
     accept: ".xls",
     multiple: false,
     action: Services.UploadService.FileUploadURL,
+    headers: { "x-auth-token": localStorage.getItem("x-auth-token") ?? "" },
     onChange(info: any) {
       const { status } = info.file;
       if (status !== "uploading") {
@@ -35,7 +36,7 @@ export const UploadButtons = () => {
           setLoading(false);
           setDisabled(true);
           let next = moment().add(1, "week").toObject();
-          setNextUpload(`${next.date}/${next.months+1}/${next.years}`);
+          setNextUpload(`${next.date}/${next.months + 1}/${next.years}`);
           setFileUploaded(TrainingStatus.Completed);
           message.success(`${info.file.name} file uploaded successfully.`);
           setPipelineInit(TrainingStatus.InProgress);

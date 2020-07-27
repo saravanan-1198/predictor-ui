@@ -1,8 +1,15 @@
+.pre-parent {
+  position: relative;
+}
+
 .prediction-title {
   color: "#bfbfbf";
-  margin-top: 20%;
   opacity: 0.1;
   text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .site-calendar-demo-card {

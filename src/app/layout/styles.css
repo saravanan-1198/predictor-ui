@@ -1,19 +1,36 @@
 @import "../../../node_modules/antd/dist/antd.css";
 
-.defaultPadding {
-  padding: 10px;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.site-layout .site-layout-background {
-  background: #fff;
-  margin: 15px 0;
-  height: 88vh;
+.noDisplay {
+  display: none;
 }
 
-.loader {
+.mainApp {
+  display: block;
   height: 100vh;
 }
 
-.center-spinner {
-  margin: 12% auto;
+@media (max-width: 1050px) {
+  .noDisplay {
+    display: block;
+  }
+
+  .mainApp {
+    display: none;
+  }
+}
+
+@media (max-height: 670px) {
+  .noDisplay {
+    display: block;
+  }
+
+  .mainApp {
+    display: none;
+  }
 }

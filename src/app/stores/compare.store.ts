@@ -42,6 +42,14 @@ class CompareStore {
     return totalAccuracy;
   }
 
+  @computed get errorPercentage() {
+    let errorPercentage = 0;
+
+    errorPercentage = this.totalErrorRevenue / this.totalActualRevenue;
+
+    return errorPercentage * 100;
+  }
+
   @computed get totalErrorRevenue() {
     let totalErrorR = 0;
 

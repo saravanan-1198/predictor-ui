@@ -94,7 +94,8 @@ class PredictionStore {
   @observable
   ModelReadyStatus: TrainingStatus = TrainingStatus.Pending;
 
-  @computed get lineData() {
+  @computed
+  get lineData() {
     const lineData: { year: string; sales: number }[] = [];
 
     const result = this.predictionOutput as IPredictionOutput;
@@ -120,7 +121,8 @@ class PredictionStore {
     return lineData;
   }
 
-  @computed get pieDataQuantity() {
+  @computed
+  get pieDataQuantity() {
     const pieData: { type: string; value: number }[] = [];
 
     const result = this.predictionOutput as IPredictionOutput;
@@ -142,10 +144,15 @@ class PredictionStore {
     return pieData;
   }
 
-  @computed get totalQuantity() {
+  @computed
+  get totalQuantity() {
     let totalQ = 0;
 
     const result = this.predictionOutput as IPredictionOutput;
+
+    if (!result) {
+      return 0;
+    }
 
     result.branches.forEach((branch) => {
       branch.data.forEach((data) => {
@@ -156,10 +163,15 @@ class PredictionStore {
     return totalQ;
   }
 
-  @computed get totalRevenue() {
+  @computed
+  get totalRevenue() {
     let totalR = 0;
 
     const result = this.predictionOutput as IPredictionOutput;
+
+    if (!result) {
+      return 0;
+    }
 
     result.branches.forEach((branch) => {
       branch.data.forEach((data) => {
@@ -170,7 +182,8 @@ class PredictionStore {
     return Number.parseFloat(totalR.toFixed(2)).toLocaleString("en-IN");
   }
 
-  @computed get pieDataRevenue() {
+  @computed
+  get pieDataRevenue() {
     const pieData: { type: string; value: number }[] = [];
 
     const result = this.predictionOutput as IPredictionOutput;

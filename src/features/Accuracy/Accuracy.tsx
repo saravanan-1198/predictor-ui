@@ -15,6 +15,7 @@ import { Services } from "../../app/api/agent";
 import PredictionStore from "../../app/stores/prediction.store";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
+import dashboardStore from "../../app/stores/dashboard.store";
 
 interface IAccuracy {
   [key: string]: any;
@@ -26,9 +27,9 @@ const superFilterCategories: { text: string; value: string }[] = [];
 
 const Accuracy = () => {
   const { treeData } = useContext(PredictionStore);
+  const { accData, setAccData } = useContext(dashboardStore);
 
   const [loading, setLoading] = useState(false);
-  const [accuracy, setAccuracy] = useState<IAccuracy>({});
   const [pageSize, setPageSize] = useState(10);
 
   const [searchText, setSearchText] = useState("");
@@ -51,8 +52,7 @@ const Accuracy = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
+            setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{ width: 188, marginBottom: 8, display: "block" }}
         />
@@ -87,16 +87,18 @@ const Accuracy = () => {
       }
     },
     render: (text: string) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text.toString()}
-        />
-      ) : (
-        text
-      ),
+      searchedColumn === dataIndex
+        ? (
+          <Highlighter
+            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+            searchWords={[searchText]}
+            autoEscape
+            textToHighlight={text.toString()}
+          />
+        )
+        : (
+          text
+        ),
   });
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
@@ -122,7 +124,7 @@ const Accuracy = () => {
         setLoading(true);
         const result = await Services.PredictionService.getAccuracy();
         if (mounted) {
-          setAccuracy(result);
+          setAccData(result);
           populateFilters(result);
           setLoading(false);
         }
@@ -132,7 +134,9 @@ const Accuracy = () => {
       }
     };
 
-    loadAccuracy();
+    if (!accData) {
+      loadAccuracy();
+    }
 
     return () => {
       mounted = false;
@@ -143,7 +147,7 @@ const Accuracy = () => {
     value.items.forEach((item: any) => {
       if (
         !subFilterCategoriesOriginal.find(
-          (value) => value.value === item.sub_category
+          (value) => value.value === item.sub_category,
         )
       ) {
         subFilterCategoriesOriginal.push({
@@ -154,7 +158,7 @@ const Accuracy = () => {
 
       if (
         !superFilterCategories.find(
-          (value) => value.value === item.super_category
+          (value) => value.value === item.super_category,
         )
       ) {
         superFilterCategories.push({
@@ -223,7 +227,7 @@ const Accuracy = () => {
     pagination: any,
     filters: Record<string, React.ReactText[] | null>,
     sorter: any,
-    extra: any
+    extra: any,
   ) => {
     if (filters.super_category !== null) {
       subFilterCategories.length = 0;
@@ -252,32 +256,30 @@ const Accuracy = () => {
           className="site-page-header"
           title="Accuracy"
           subTitle="Displays the prediction accuracy of each item"
-          extra={
-            <Row>
-              <Statistic
-                title="Accuracy"
-                suffix="%"
-                precision={2}
-                value={Number.parseFloat(accuracy.accuracy)}
-              />
-              <Statistic
-                title="Non Zeros"
-                suffix="%"
-                value={Number.parseFloat(accuracy.non_zeros)}
-                precision={2}
-                style={{ margin: "0 60px" }}
-              />
-              <Statistic
-                title="Zeros"
-                suffix="%"
-                precision={2}
-                value={Number.parseFloat(accuracy.zeros)}
-              />
-            </Row>
-          }
+          extra={<Row>
+            <Statistic
+              title="Accuracy"
+              suffix="%"
+              precision={2}
+              value={Number.parseFloat(!accData ? "0.00" : accData.accuracy)}
+            />
+            <Statistic
+              title="Non Zeros"
+              suffix="%"
+              value={Number.parseFloat(!accData ? "0.00" : accData.non_zeros)}
+              precision={2}
+              style={{ margin: "0 60px" }}
+            />
+            <Statistic
+              title="Zeros"
+              suffix="%"
+              precision={2}
+              value={Number.parseFloat(!accData ? "0.00" : accData.zeros)}
+            />
+          </Row>}
         />
         <Table
-          dataSource={accuracy.items}
+          dataSource={!accData ? undefined : accData.items}
           style={{ margin: "0 20px" }}
           columns={columns}
           onChange={handleOnTableChange}

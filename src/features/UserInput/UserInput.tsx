@@ -251,6 +251,7 @@ const UserInput: React.FC<IProps> = ({ route, setCompareLoading }) => {
           value.criteria
         ),
       };
+      console.log(input);
       setCategories(value.categories);
       setDateInput(value.range);
       setStoreCriteria(value.criteria);
