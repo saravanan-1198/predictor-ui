@@ -35,6 +35,9 @@ interface IProps {
   setCompareLoading: any;
 }
 
+var datelist: string[]=[];
+const inactivemonths: string[] = [];
+
 const UserInput: React.FC<IProps> = ({ route, setCompareLoading }) => {
   const {
     setPredictionOutput,
@@ -80,10 +83,47 @@ const UserInput: React.FC<IProps> = ({ route, setCompareLoading }) => {
     let mounted = true;
 
     const loadAssets = async () => {
-      setFormLoading(true);
+    setFormLoading(true);
 
-      const resultBranch = await Services.AssetService.getBranches();
-
+    const resultBranch = await Services.AssetService.getBranches();
+    const DateList1 = await Services.AssetService.getInactiveDates();
+    const years=Object.keys(DateList1);
+    
+    years.forEach((year) => {
+      const months = Object.keys(DateList1[year])
+      months.forEach((month) => {
+        const noofdates =DateList1[year][month].length;
+        const datesss = new Date(Number(year), Number(month), 0).getDate();
+        if( noofdates === datesss ){
+           if(Number(month)<10)
+              inactivemonths.push(year+"-0"+month);
+            else   
+             inactivemonths.push(year+"-"+month);
+         }
+       })
+    });
+    
+    for(var obj in DateList1){
+      var month = DateList1[obj];
+      if(isObj(month)){
+        for(var monthdate in month){
+          var monthdis="";
+          if(Number(monthdate)<10)
+             monthdis="0"+monthdate;
+          else
+             monthdis=monthdate;
+          for(var dates in month[monthdate]){
+            var date="";
+            if(Number(month[monthdate][dates])<10)
+               date="0"+month[monthdate][dates];
+            else
+               date=month[monthdate][dates];
+            datelist.push(String(obj+"-"+monthdis+"-"+date));
+          }
+       }
+      }
+    }
+      
       if (mounted) {
         setBranchList(resultBranch);
         const resultCat = await Services.AssetService.getCategories();
@@ -371,6 +411,37 @@ const UserInput: React.FC<IProps> = ({ route, setCompareLoading }) => {
       setBranchesDiabled(false);
     }
   };
+
+
+const isObj = (o: { constructor: ObjectConstructor; }) => {
+  return o?.constructor === Object;
+};
+
+const disabledDate = (current: any) => {
+  let index = datelist.findIndex(
+  (date: string) => {
+        return date === moment(current).format("YYYY-MM-DD");
+      }
+    );
+    return index !== -1 || !(current && current < moment().add(1, "month"))
+    ? true
+    : false;
+};
+
+const disabledMonth = (current: any) => {
+  
+  let index = inactivemonths.findIndex(
+    (date: string) => {
+      return date === moment(current).format("YYYY-MM");
+    }
+  );
+  return index !== -1 || !(current && current < moment().add(1, "month"))
+  ? true
+  : false;
+};
+    
+    
+
   return (
     <div>
       {route === "/predict" && (
@@ -404,6 +475,7 @@ const UserInput: React.FC<IProps> = ({ route, setCompareLoading }) => {
               <RangePicker
                 format="DD-MM-YYYY"
                 inputReadOnly={true}
+                disabledDate={disabledDate}
                 style={{ width: "100%" }}
               />
             ) : (
@@ -411,6 +483,7 @@ const UserInput: React.FC<IProps> = ({ route, setCompareLoading }) => {
                 format="MM-YYYY"
                 picker="month"
                 inputReadOnly={true}
+                disabledDate={disabledMonth}
                 style={{ width: "100%" }}
               />
             )}

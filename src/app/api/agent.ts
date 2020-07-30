@@ -59,12 +59,14 @@ const AssetService = {
   getBranches: () => requests.get("/branches"),
   getCategories: () => requests.get("/categories"),
   getLastTraining: () => requests.get("/model"),
+  getInactiveDates: () => requests.get("/inactive"),
 };
 
 const PredictionService = {
   getAccuracy: () => requests.get("/accuracy"),
   getPrediction: (predictionInput: IPredictionInput) =>
     requests.post("/predict", predictionInput),
+
 };
 
 const CompareService = {
