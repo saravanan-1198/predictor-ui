@@ -4,6 +4,8 @@ import moment, { Moment } from "moment";
 import { Line, Pie } from "@antv/g2plot";
 import { TrainingStatus } from "../models/training-status.enum";
 import { IPredictionOutput } from "../models/prediction-output.model";
+import { DashboardStatus } from "../../app/models/training-status.enum";
+import { stat } from "fs";
 
 configure({ enforceActions: "always" });
 
@@ -35,6 +37,12 @@ class PredictionStore {
     this.ModelReadyStatus = TrainingStatus.Pending;
     this.tableData = [];
     this.insightData = [];
+    this.StartedStatus = DashboardStatus.Incomplete;  
+    this.PipelineInitiated = DashboardStatus.Incomplete;
+    this.TrainingStarted = DashboardStatus.Incomplete;
+    this.TrainingComplete= DashboardStatus.Incomplete;
+    this.ModelsDeployed = DashboardStatus.Incomplete;
+   
   };
 
   @observable
@@ -93,6 +101,21 @@ class PredictionStore {
 
   @observable
   ModelReadyStatus: TrainingStatus = TrainingStatus.Pending;
+
+  @observable
+  StartedStatus : DashboardStatus = DashboardStatus.Incomplete;
+
+  @observable
+  PipelineInitiated : DashboardStatus = DashboardStatus.Incomplete;
+
+  @observable
+  TrainingStarted : DashboardStatus = DashboardStatus.Incomplete;
+
+  @observable
+  TrainingComplete: DashboardStatus = DashboardStatus.Incomplete;
+
+  @observable
+  ModelsDeployed: DashboardStatus = DashboardStatus.Incomplete;
 
   @computed
   get lineData() {
@@ -297,6 +320,32 @@ class PredictionStore {
   setBranchList = (value: { key: number; name: string }[]) => {
     this.branchList = value;
   };
+
+
+  @action
+  setStarted = (status: DashboardStatus) => {
+    this.StartedStatus = status ;
+  }
+
+  @action
+  setPipelineInitiated = (status: DashboardStatus) => {
+     this. PipelineInitiated = status;
+  }
+
+  @action
+  setTrainingStarted = (status: DashboardStatus) => {
+    this.TrainingStarted=status;
+  }
+
+  @action
+  setTrainingComplete = (status: DashboardStatus) => {
+     this.TrainingComplete = status;
+  }
+
+  @action
+  setModelsDeployed = (status: DashboardStatus) => {
+     this.ModelsDeployed = status;
+  }
 }
 
 export default createContext<PredictionStore>(new PredictionStore());
