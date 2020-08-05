@@ -3,3 +3,8 @@ export enum TrainingStatus {
   InProgress,
   Completed,
 }
+
+export enum DashboardStatus {
+  Complete,
+  Incomplete,
+}

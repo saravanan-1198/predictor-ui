@@ -11,7 +11,11 @@ class DashboardStore {
     this.tmrData = undefined;
     this.accData = undefined;
     this.lastTraining = "";
+    this.uploaddetails = undefined;
   };
+
+  @observable
+  uploaddetails: any;
 
   @observable
   tmrData: any;
@@ -21,6 +25,11 @@ class DashboardStore {
 
   @observable
   accData: any;
+
+  @action
+  setUploadDetails = (value: any) => {
+    this.uploaddetails = value;
+  };
 
   @action
   setLastTraining = (value: string) => {

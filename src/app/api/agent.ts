@@ -63,6 +63,7 @@ const AssetService = {
 };
 
 const PredictionService = {
+  getUploadDetails: () => requests.get("/upload"),
   getAccuracy: () => requests.get("/accuracy"),
   getPrediction: (predictionInput: IPredictionInput) =>
     requests.post("/predict", predictionInput),

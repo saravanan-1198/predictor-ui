@@ -12,7 +12,9 @@ import {
   Tag,
   List,
   Spin,
+ Timeline,
   message,
+  Select,
 } from "antd";
 import moment from "moment";
 import { Services } from "../../app/api/agent";
@@ -29,8 +31,27 @@ import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 import dashboardStore from "../../app/stores/dashboard.store";
 import download from "downloadjs";
+import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import PredictionStore from "../../app/stores/prediction.store";
+import { DashboardStatus } from "../../app/models/training-status.enum";
+const { Option } = Select;
+
+var zad = 0 ;
+var ed = 0 ;
+var result1: any;
+var nextDateparameter: any ;
+var timeStarted: {} | null | undefined;
+var LastUploadDetail: any ;
+var replaceOption: any;
+  
+  
+const  options: { id: number; quantity: number; revenue: number; value: any; }[] =[];
+     
 
 const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
+  const [quatotal,setqua] = useState(0);
+  const [revtotal,setrev] = useState(0);
+
   const {
     setPredictionOutput,
     setTableLoading,
@@ -39,7 +60,34 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
     totalRevenue,
   } = useContext(predictionStore);
 
-  const { setTmrData, setAccData, tmrData, accData, lastTraining } = useContext(
+  const {
+    StartedStatus, 
+    PipelineInitiated ,
+    TrainingStarted ,
+    TrainingComplete ,
+    ModelsDeployed,
+    setStarted ,
+    setPipelineInitiated ,
+    setTrainingStarted ,
+    setTrainingComplete ,
+    setModelsDeployed 
+    } = useContext(PredictionStore);
+  
+    const getDotInput = (status: DashboardStatus) => {
+        if (status === DashboardStatus.Incomplete)
+        return <ClockCircleOutlined className="timeline-clock-icon" />;
+      else if(status === DashboardStatus.Complete)
+       return <CheckCircleOutlined className="timeline-clock-icon" />;
+    };
+  
+    const getColorInput = (status: DashboardStatus) => {
+       if (status === DashboardStatus.Incomplete) return "red";
+      else if(status === DashboardStatus.Complete)
+        return "green";
+    };
+  
+
+  const { setUploadDetails , setTmrData, setAccData, tmrData, accData, lastTraining, uploaddetails } = useContext(
     dashboardStore
   );
 
@@ -165,8 +213,47 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
           },
         ],
       };
+          
       try {
+              
         const result = await Services.PredictionService.getPrediction(input);
+        console.log(result);
+        var branches = result["branches"];
+        var count=1;
+        var quatota=0;
+        var revtota=0;
+        branches.forEach((bran: { [x: string]: any; }) => {
+        var branch= bran["data"];
+        var qua=0,rev=0;
+        
+        branch.forEach( (item: any ) => {
+         qua += item["predicion"]["total"]["quantity"];
+        });
+
+        branch.forEach( (item: any ) => {
+          rev += item["predicion"]["total"]["revenue"];
+         });
+         options.push({
+           id: count,
+           quantity: qua,
+           revenue : rev,
+           value: bran["branch"]
+        })
+        quatota += qua;
+        revtota += rev;
+        count++;
+
+      });
+      options.push({
+        id: 0,
+        quantity: quatota,
+        revenue : revtota,
+        value: "Total"
+      });
+      console.log(options);
+      setqua(quatota);
+      setrev(revtota);
+        
         if (mounted) {
           setPredictionOutput(result);
           setTmrData(result);
@@ -180,9 +267,48 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
     const getAccData = async () => {
       try {
         const result = await Services.PredictionService.getAccuracy();
+        zad = Number.parseFloat(result.z_acc_diff);
+        ed = Number.parseFloat(result.error_diff);
+        
         if (mounted) {
           setAccData(result);
         }
+        result1 = await Services.PredictionService.getUploadDetails();
+        if(mounted){
+            setUploadDetails(result1);     
+            var nextDate = String(result1.nextUpload);
+            var timestamp = result1.lastTrainingDetails["stages"][0]["time"];
+            timeStarted = new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' ');
+            var nextDatepara = nextDate.split("/");    
+            nextDateparameter = String(nextDatepara[2]+"-"+nextDatepara[1]+"-"+Number(Number(nextDatepara[0])+1));
+            if(result1.lastTrainingDetails["stages"][0]["status"] === "Incomplete")
+              setStarted(DashboardStatus.Incomplete);
+            else 
+              setStarted(DashboardStatus.Complete);
+            if(result1.lastTrainingDetails["stages"][1]["status"] === "Incomplete") 
+              setPipelineInitiated(DashboardStatus.Incomplete);
+            else 
+               setPipelineInitiated(DashboardStatus.Complete);
+
+            if(result1.lastTrainingDetails["stages"][2]["status"] === "Incomplete") 
+               setTrainingStarted(DashboardStatus.Incomplete);
+            else 
+               setTrainingStarted(DashboardStatus.Complete);
+
+            if(result1.lastTrainingDetails["stages"][3]["status"] === "Incomplete") 
+                setTrainingComplete(DashboardStatus.Incomplete);
+            else 
+                setTrainingComplete(DashboardStatus.Complete);
+
+            if(result1.lastTrainingDetails["stages"][4]["status"] === "Incomplete") 
+                setModelsDeployed(DashboardStatus.Incomplete);
+            else 
+                setModelsDeployed(DashboardStatus.Complete);
+ 
+                LastUploadDetail = result1.lastTrainingDetails["lastUpdateBefore"];
+                replaceOption = result1.lastTrainingDetails["replaceOption"]; 
+         }
+      
       } catch (error) {
         message.error("Unable to connect to server. Try again later.");
         if (mounted) setLoading(false);
@@ -217,6 +343,12 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   const handleAccMoreClick = () => {
     history.push("/accuracy");
   };
+  
+  const onclickhandle = (e: any, a:any) => {
+    console.log(e+" "+a.rev+" "+a.qua);
+    setqua(a.qua);
+    setrev(a.rev);
+  }
 
   return (
     <Spin spinning={loading}>
@@ -228,20 +360,37 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
             style={{ padding: 0 }}
             tags={<Tag color="blue">{new Date().toDateString()}</Tag>}
           />
+          <br />
+          <Select
+          onChange = {onclickhandle}
+          defaultValue = "Total"
+          size="large"
+          style={{ width: 400 }}
+          >
+              { options.map((v: { id: number,
+                        quantity: number,
+                        revenue : number,
+                        value: string  }) => (
+                <Option value={ v.value } qua={ v.quantity } key={v.id} rev={v.revenue}>
+                  {v.value}
+                </Option>
+              ))}
+            </Select>
+            <br />
           <div>
             <div className="statistics">
               <Statistic
                 title="Quantity"
                 suffix="Units"
-                value={totalQuantity}
+                value={quatotal}
                 className="stat-item"
               />
-
+             
               <Statistic
                 title="Revenue"
                 prefix="₹"
                 precision={2}
-                value={totalRevenue}
+                value={revtotal}
                 className="stat-item"
               />
             </div>
@@ -267,41 +416,79 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
                 </Tag>
               }
             />
-            <div className="statistics">
-              <Statistic
+            <div className="site-statistics-demo-card">
+            <Row gutter={16}>
+              <Col span={12}>
+                <Statistic
+                title="Error"
+                suffix="%"
+                precision={2}
+                value={
+                  accData === undefined
+                    ? Number.parseFloat("0.00")
+                    : Number.parseFloat(accData.error_perc)
+                }
+                valueStyle={{fontSize: 32 }}
+                className="stat-item"
+               />
+                <Statistic
+                title=""
+                value={
+                  accData === undefined
+                    ? Number.parseFloat("0.00")
+                    : Math.abs(Number.parseFloat(accData.error_diff))
+                }
+                precision={2}
+                valueStyle={
+                  ed < 0 
+                  ? { color: '#3f8600' , fontSize: 16} 
+                  : { color: '#cf1322' , fontSize: 16} 
+                }
+                prefix={
+                  ed < 0 
+                  ? <ArrowDownOutlined /> 
+                  : <ArrowUpOutlined />
+                }
+                suffix="%"
+               />
+             </Col>
+             <Col span={12}>
+                <Statistic
                 title="Accuracy"
                 suffix="%"
                 precision={2}
                 value={
                   accData === undefined
                     ? Number.parseFloat("0.00")
-                    : Number.parseFloat(accData.accuracy)
+                    : Math.abs(Number.parseFloat(accData.z_acc))
                 }
+                valueStyle={{fontSize: 32 }}
                 className="stat-item"
-              />
-
-              <Statistic
-                title="Zeros"
-                suffix="%"
-                precision={2}
-                value={
+                />
+                
+                <Statistic
+                 title=""
+                 value={
                   accData === undefined
                     ? Number.parseFloat("0.00")
-                    : Number.parseFloat(accData.non_zeros)
+                    : Number.parseFloat(accData.z_acc_diff)
                 }
-                className="stat-item"
-              />
-              <Statistic
-                title="Non-Zeros"
+                 precision={2}
+                 valueStyle={
+                  zad > 0 
+                  ? { color: '#3f8600' , fontSize: 16} 
+                  : { color: '#cf1322' , fontSize: 16} 
+                }
+                prefix={
+                  zad < 0 
+                  ? <ArrowDownOutlined /> 
+                  : <ArrowUpOutlined />
+                }
                 suffix="%"
-                precision={2}
-                value={
-                  accData === undefined
-                    ? Number.parseFloat("0.00")
-                    : Number.parseFloat(accData.zeros)
-                }
-                className="stat-item"
-              />
+                />        
+              </Col>
+             </Row>
+              
             </div>
             <Button
               type="primary"
@@ -313,39 +500,72 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
           </div>
         </Card>
 
-        <Card className="grid-item grid-item-3" style={{ textAlign: "center" }}>
+        <Card className="grid-item grid-item-3" >
           <PageHeader
             className="site-page-header"
-            title="Training"
+            title="Training Details"
             style={{ padding: 0 }}
-            tags={<Tag color="blue">Completed</Tag>}
+                         
           />
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -40%)",
-              width: "100%",
-            }}
-          >
-            <CheckCircleOutlined
-              style={{
-                fontSize: 50,
-                display: "block",
-                color: "#38a1f7",
-                marginBottom: 20,
-              }}
-            />
-            <p style={{ fontSize: 16 }}>Last Upload - 25/06/2020</p>
+          <br/>
+
+          <div style={{
+                position: "absolute",
+                top: "27%",
+                left: "15%" ,
+                fontSize : 16,
+             }}>
+            Next Training - <span> 
+                <Tag color="blue">
+                  {new Date(nextDateparameter).toDateString() } 
+                </Tag>
+             </span>
+                 
           </div>
+         
+          <div style={{
+                position: "absolute",
+                top: "39%",
+                left: "15%" ,
+                fontSize : 16,
+             }}>
+            Updated Before - <span>  </span>
+                <strong> { LastUploadDetail }</strong>
+                   
+          </div>
+          <div style={{
+                position: "absolute",
+                top: "51%",
+                left: "15%" ,
+                fontSize : 16,
+             }}>
+            Replace Option - <span>  </span>
+                <strong> { replaceOption }</strong>
+                 
+                       
+          </div>
+          <span/>
+          <div style={{
+                position: "absolute",
+                top: "63%",
+                left: "15%" ,
+                fontSize : 16,
+             }}>
+            Status -  <span> <strong> Started  </strong >
+            <Tag color="green">
+                  {timeStarted} 
+                </Tag></span>
+             
+          </div>
+         <span/>
+  
           <Button
             type="primary"
             style={{ position: "absolute", bottom: 0, right: 0, margin: 20 }}
           >
             Upload
           </Button>
-        </Card>
+          </Card>
       </div>
     </Spin>
   );
