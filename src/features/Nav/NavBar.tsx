@@ -113,16 +113,16 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
           <Sider trigger={null} collapsible collapsed={collapsed} 
           style={{display: collapsed? "none" : "block", width:"30", position:"absolute", color: "#f0f5ff"}}
           className="MenuButton" >
-          <Menu theme="dark" mode="inline"  className="menuitem"
+          <Menu theme="light" mode="inline"  className="menuitem"
           onSelect={toggle}
           >
-            <Menu.Item key="1" icon={<DesktopOutlined />}>
+            <Menu.Item key="1" >
             <NavLink to="/" activeClassName="your-active-class">Dashboard</NavLink>
             </Menu.Item>
-            <Menu.Item key="3" icon={<UploadOutlined />}>
+            <Menu.Item key="3" >
             <NavLink to="/upload" activeClassName="your-active-class">Upload</NavLink>
             </Menu.Item>
-            <Menu.Item key="8" icon={<LineChartOutlined />}>
+            <Menu.Item key="8" >
           <NavLink to="/inventory" activeClassName="your-active-class">Inventory</NavLink>
         </Menu.Item>
           </Menu>
