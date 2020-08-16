@@ -13,3 +13,17 @@
   float: right;
   height: 100%;
 }
+
+.MenuButton{
+  z-index: 1;
+  background-color: blue ;
+  color: white;
+}
+
+.menuitem{
+  text-emphasis-color:  white;
+}
+
+.your-active-class{
+  color: white;
+}

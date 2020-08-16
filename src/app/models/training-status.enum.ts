@@ -5,6 +5,7 @@ export enum TrainingStatus {
 }
 
 export enum DashboardStatus {
+  Pending,
   Complete,
   Incomplete,
 }

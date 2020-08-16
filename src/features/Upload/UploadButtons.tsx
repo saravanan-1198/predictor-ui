@@ -4,12 +4,25 @@ import { InboxOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import PredictionStore from "../../app/stores/prediction.store";
 import { Services } from "../../app/api/agent";
 import moment from "moment";
-import { TrainingStatus } from "../../app/models/training-status.enum";
+import { DashboardStatus } from "../../app/models/training-status.enum";
 
 const { Dragger } = Upload;
 
 export const UploadButtons = () => {
-  const { setFileUploaded, setPipelineInit, setTrainingCompleted } = useContext(
+  const { settimePipelineInitiated,
+    settimeTrainingStarted,
+    settimeTrainingComplete,
+    settimeModelsDeployed,
+    setnextDateparameter, 
+    settimeStarted, 
+    setreplaceOption,
+    setLastUploadDetail, 
+    setStarted , 
+    setPipelineInitiated, 
+    setTrainingStarted , 
+    setTrainingComplete,
+    setModelsDeployed,
+    setreplaceOptions  } = useContext(
     PredictionStore
   );
 
@@ -29,7 +42,7 @@ export const UploadButtons = () => {
         console.log(info.file, info.fileList);
       } else {
         setLoading(true);
-        setFileUploaded(TrainingStatus.InProgress);
+        setStarted(DashboardStatus.Incomplete);
       }
       if (status === "done") {
         setTimeout(() => {
@@ -37,12 +50,14 @@ export const UploadButtons = () => {
           setDisabled(true);
           let next = moment().add(1, "week").toObject();
           setNextUpload(`${next.date}/${next.months + 1}/${next.years}`);
-          setFileUploaded(TrainingStatus.Completed);
+          setStarted(DashboardStatus.Complete);
           message.success(`${info.file.name} file uploaded successfully.`);
-          setPipelineInit(TrainingStatus.InProgress);
+          setPipelineInitiated(DashboardStatus.Incomplete);
           setTimeout(() => {
-            setPipelineInit(TrainingStatus.Completed);
-            setTrainingCompleted(TrainingStatus.InProgress);
+            setPipelineInitiated(DashboardStatus.Complete);
+            setTrainingStarted(DashboardStatus.Incomplete);
+            setTrainingComplete(DashboardStatus.Incomplete); 
+            setModelsDeployed(DashboardStatus.Incomplete); 
           }, 2000);
         }, 3000);
       } else if (status === "error") {
@@ -66,10 +81,57 @@ export const UploadButtons = () => {
   const allowUpload = async () => {
     setLoading(true);
     const result = await Services.UploadService.allowUpload();
+    // console.log(result);
+    var nextDate = String(result.nextUpload);
+    var timestamp = result.lastTrainingDetails["stages"][0]["time"];
+    settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+    var nextDatepara = nextDate.split("/");    
+    setnextDateparameter(String(nextDatepara[2]+"-"+nextDatepara[1]+"-"+Number(Number(nextDatepara[0])+1)));
     if (mounted) {
       setDisabled(!result.allowUpload);
       setNextUpload(result.nextUpload);
+      setreplaceOptions(result.replaceOptions)
       setLoading(false);
+      if(result.lastTrainingDetails["stages"][0]["status"] === "Incomplete")
+       setStarted(DashboardStatus.Incomplete);
+       else 
+         { setStarted(DashboardStatus.Complete);
+          var timestamp = result.lastTrainingDetails["stages"][0]["time"];
+          settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+        }
+       if(result.lastTrainingDetails["stages"][1]["status"] === "Incomplete") 
+         setPipelineInitiated(DashboardStatus.Incomplete);
+       else 
+          { setPipelineInitiated(DashboardStatus.Complete);
+            var timestamp = result.lastTrainingDetails["stages"][1]["time"];
+            settimePipelineInitiated(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+          }
+
+       if(result.lastTrainingDetails["stages"][2]["status"] === "Incomplete") 
+          setTrainingStarted(DashboardStatus.Incomplete);
+       else 
+          { setTrainingStarted(DashboardStatus.Complete);
+            var timestamp = result.lastTrainingDetails["stages"][2]["time"];
+            settimeTrainingStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+          }
+
+       if(result.lastTrainingDetails["stages"][3]["status"] === "Incomplete") 
+           setTrainingComplete(DashboardStatus.Incomplete);
+       else 
+        { setTrainingComplete(DashboardStatus.Complete);
+          var timestamp = result.lastTrainingDetails["stages"][3]["time"];
+          settimeTrainingComplete(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+        }
+
+       if(result.lastTrainingDetails["stages"][4]["status"] === "Incomplete") 
+           setModelsDeployed(DashboardStatus.Incomplete);
+       else 
+           { setModelsDeployed(DashboardStatus.Complete);
+            var timestamp = result.lastTrainingDetails["stages"][4]["time"];
+            settimeModelsDeployed(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+          }
+       setLastUploadDetail(result.lastTrainingDetails["lastUpdateBefore"]);
+       setreplaceOption(result.lastTrainingDetails["replaceOption"]);     
     }
   };
 
