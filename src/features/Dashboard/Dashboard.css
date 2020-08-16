@@ -52,3 +52,8 @@
 .stat-item {
   flex: 1;
 }
+
+.site-statistics-demo-card{
+  margin-left: 50px;
+  margin-top: 20px;;
+}

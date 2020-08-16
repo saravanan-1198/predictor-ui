@@ -82,3 +82,5 @@ export const Home: React.FC<RouteComponentProps> = ({ history, location }) => {
     </Layout>
   );
 };
+
+export default Home;

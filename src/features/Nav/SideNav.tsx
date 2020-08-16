@@ -1,7 +1,17 @@
-import React from "react";
+import React ,{useState} from "react";
 import "./SideNav.css";
 import { Layout, Menu, Button } from "antd";
 import { NavLink } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import {
+  AppstoreOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+  PieChartOutlined,
+  DesktopOutlined,
+  ContainerOutlined,
+  MailOutlined,
+} from '@ant-design/icons';
 
 const { Sider } = Layout;
 
@@ -10,10 +20,22 @@ interface IProps {
 }
 
 export const SideNav: React.FC<IProps> = ({ handleLogout }) => {
+  const [collapsed, setState] = useState(false);
+
+const toggleCollapsed = () => {
+  setState(!collapsed);
+};
+
   return (
-    <Sider theme="light">
-      <div className="logo">Tosai Predict</div>
-      <Menu theme="light" defaultSelectedKeys={["1"]} mode="vertical">
+    // <Sider theme="light">
+      <div  style={{ width: 256 }}>
+        <Button type="primary" onClick={toggleCollapsed} style={{ marginBottom: 16 }}>
+          {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined)}
+        </Button>
+      <Menu theme="dark" defaultSelectedKeys={["1"]} 
+      mode="inline"
+      inlineCollapsed={collapsed}
+      >
         <Menu.Item key="1">
           <NavLink to="/">Dashboard</NavLink>
         </Menu.Item>
@@ -32,6 +54,10 @@ export const SideNav: React.FC<IProps> = ({ handleLogout }) => {
           </Button>
         </Menu.Item>
       </Menu>
-    </Sider>
+      </div>
+    // </Sider>
   );
 };
+
+export default observer(SideNav);
+

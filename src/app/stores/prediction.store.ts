@@ -42,7 +42,18 @@ class PredictionStore {
     this.TrainingStarted = DashboardStatus.Incomplete;
     this.TrainingComplete= DashboardStatus.Incomplete;
     this.ModelsDeployed = DashboardStatus.Incomplete;
-   
+    this.nextdateparamter= String;
+    this.replaceOptions = [];
+    this.timeStarted = undefined;
+    this.LastUploadDetail = undefined;
+    this.replaceOption = undefined;
+    this.timePipelineInitiated=undefined;
+    this.timeTrainingStarted=undefined;
+    this.timeTrainingComplete=undefined;
+    this.timeModelsDeployed=undefined;
+    this.Lasttimestamp= "";
+    this.LastEntryDate= undefined;
+    this.modelVersion=undefined;
   };
 
   @observable
@@ -116,6 +127,42 @@ class PredictionStore {
 
   @observable
   ModelsDeployed: DashboardStatus = DashboardStatus.Incomplete;
+ 
+  @observable
+  replaceOptions=[];
+
+  @observable
+  timeStarted = undefined;
+  
+  @observable
+  LastUploadDetail = undefined ;
+
+  @observable
+  replaceOption = undefined ;
+
+  @observable
+  nextdateparamter=String;
+
+  @observable
+  timePipelineInitiated = undefined;
+  
+  @observable
+  timeTrainingStarted = undefined;
+  
+  @observable
+  timeTrainingComplete = undefined;
+  
+  @observable
+  timeModelsDeployed = undefined;
+
+  @observable
+  Lasttimestamp = "";
+
+  @observable
+  LastEntryDate = undefined;
+
+  @observable
+  modelVersion= undefined;
 
   @computed
   get lineData() {
@@ -345,6 +392,67 @@ class PredictionStore {
   @action
   setModelsDeployed = (status: DashboardStatus) => {
      this.ModelsDeployed = status;
+  }
+
+  @action
+  setreplaceOptions =(replaceOpti : []) => {
+    this.replaceOptions=replaceOpti;
+  }
+
+  @action
+  settimeStarted  = (timstamp : any) =>{
+    this.timeStarted = timstamp;
+  }
+
+  
+  @action
+  setLastUploadDetail = (lastUplo : any) =>  {
+    this.LastUploadDetail = lastUplo;
+  }
+  
+  @action
+  setreplaceOption = (repl : any) => {
+    this.replaceOption = repl;
+  }
+
+  @action
+  setnextDateparameter = (nextd : any) => {
+    this.nextdateparamter = nextd;
+  }
+
+  @action
+  settimePipelineInitiated = (times : any) => {
+     this.timePipelineInitiated = times;
+  }
+  
+  @action
+  settimeTrainingStarted = (times : any) => {
+    this.timeTrainingStarted= times;
+  }
+  
+  @action
+  settimeTrainingComplete = (times : any) => {
+    this.timeTrainingComplete = times;
+  }
+  
+  @action
+  settimeModelsDeployed = (times : any) => {
+    this.timeModelsDeployed = times;
+  }
+
+  @action 
+  setLasttimestamp = (times: any) => {
+    this.Lasttimestamp = times;
+  }
+
+  @action
+  setLastEntryDate = (lastdate : any) => {
+    this.LastEntryDate = lastdate;
+  }
+
+  @action
+  setmodelVersion = (version : any) => {
+    this.modelVersion = version;
   }
 }
 

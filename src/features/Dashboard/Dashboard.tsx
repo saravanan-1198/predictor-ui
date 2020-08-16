@@ -12,7 +12,7 @@ import {
   Tag,
   List,
   Spin,
- Timeline,
+  Timeline,
   message,
   Select,
 } from "antd";
@@ -39,11 +39,7 @@ const { Option } = Select;
 var zad = 0 ;
 var ed = 0 ;
 var result1: any;
-var nextDateparameter: any ;
-var timeStarted: {} | null | undefined;
-var LastUploadDetail: any ;
-var replaceOption: any;
-  
+// var nextDateparamete : any;
   
 const  options: { id: number; quantity: number; revenue: number; value: any; }[] =[];
      
@@ -51,6 +47,15 @@ const  options: { id: number; quantity: number; revenue: number; value: any; }[]
 const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   const [quatotal,setqua] = useState(0);
   const [revtotal,setrev] = useState(0);
+  const [modelDetails,setModelTraining] = useState({
+    time:"",
+    lastEntryDate:{
+      year: 0,
+      month: 0,
+      date: 0
+    },
+    version:""
+  })
 
   const {
     setPredictionOutput,
@@ -66,11 +71,29 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
     TrainingStarted ,
     TrainingComplete ,
     ModelsDeployed,
+    timeStarted, 
+    LastUploadDetail,
+    replaceOption,
+    nextdateparamter,
+    Lasttimestamp,
+    LastEntryDate ,
+    modelVersion,
     setStarted ,
     setPipelineInitiated ,
     setTrainingStarted ,
     setTrainingComplete ,
-    setModelsDeployed 
+    setModelsDeployed ,
+    settimeStarted,
+    setLastUploadDetail,
+    setreplaceOption, 
+    setnextDateparameter,
+    settimePipelineInitiated,
+    settimeTrainingStarted,
+    settimeTrainingComplete,
+    settimeModelsDeployed,
+    setLasttimestamp,
+    setLastEntryDate,
+    setmodelVersion
     } = useContext(PredictionStore);
   
     const getDotInput = (status: DashboardStatus) => {
@@ -87,7 +110,7 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
     };
   
 
-  const { setUploadDetails , setTmrData, setAccData, tmrData, accData, lastTraining, uploaddetails } = useContext(
+  const { setUploadDetails , setTmrData, setAccData,setLastTraining, tmrData, accData, lastTraining, uploaddetails } = useContext(
     dashboardStore
   );
 
@@ -217,43 +240,48 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
       try {
               
         const result = await Services.PredictionService.getPrediction(input);
-        console.log(result);
         var branches = result["branches"];
         var count=1;
         var quatota=0;
         var revtota=0;
         branches.forEach((bran: { [x: string]: any; }) => {
-        var branch= bran["data"];
-        var qua=0,rev=0;
-        
-        branch.forEach( (item: any ) => {
-         qua += item["predicion"]["total"]["quantity"];
+            var branch= bran["data"];
+            var qua=0,rev=0;
+            
+            branch.forEach( (item: any ) => {
+             qua += item["predicion"]["total"]["quantity"];
+            });
+    
+            branch.forEach( (item: any ) => {
+                  rev += item["predicion"]["total"]["revenue"];
+            });
+            options.push({
+               id: count,
+               quantity: qua,
+               revenue : rev,
+               value: bran["branch"]
+            });
+            quatota += qua;
+            revtota += rev;
+            count++;
         });
-
-        branch.forEach( (item: any ) => {
-          rev += item["predicion"]["total"]["revenue"];
-         });
-         options.push({
-           id: count,
-           quantity: qua,
-           revenue : rev,
-           value: bran["branch"]
-        })
-        quatota += qua;
-        revtota += rev;
-        count++;
-
-      });
       options.push({
         id: 0,
         quantity: quatota,
         revenue : revtota,
         value: "Total"
       });
-      console.log(options);
       setqua(quatota);
       setrev(revtota);
-        
+      
+      const modelDetails = await Services.PredictionService.getModelDetails();
+      setModelTraining(modelDetails);
+      var y=modelDetails["lastEntryDate"]["year"];
+      var m=modelDetails["lastEntryDate"]["month"]-1;
+      var d=modelDetails["lastEntryDate"]["date"];
+      setLastEntryDate(new Date (y,m,d).toDateString());
+      setmodelVersion(modelDetails["version"]);
+      setLasttimestamp(modelDetails["time"]);
         if (mounted) {
           setPredictionOutput(result);
           setTmrData(result);
@@ -277,36 +305,50 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
         if(mounted){
             setUploadDetails(result1);     
             var nextDate = String(result1.nextUpload);
-            var timestamp = result1.lastTrainingDetails["stages"][0]["time"];
-            timeStarted = new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' ');
+           
             var nextDatepara = nextDate.split("/");    
-            nextDateparameter = String(nextDatepara[2]+"-"+nextDatepara[1]+"-"+Number(Number(nextDatepara[0])+1));
+            setnextDateparameter(String(nextDatepara[2]+"-"+nextDatepara[1]+"-"+Number(Number(nextDatepara[0])+1)));
             if(result1.lastTrainingDetails["stages"][0]["status"] === "Incomplete")
               setStarted(DashboardStatus.Incomplete);
             else 
-              setStarted(DashboardStatus.Complete);
+              { setStarted(DashboardStatus.Complete);
+                var timestamp = result1.lastTrainingDetails["stages"][0]["time"];
+                settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+              }
             if(result1.lastTrainingDetails["stages"][1]["status"] === "Incomplete") 
               setPipelineInitiated(DashboardStatus.Incomplete);
             else 
-               setPipelineInitiated(DashboardStatus.Complete);
+              { setPipelineInitiated(DashboardStatus.Complete);
+                var timestamp = result1.lastTrainingDetails["stages"][0]["time"];
+                settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+              } 
 
             if(result1.lastTrainingDetails["stages"][2]["status"] === "Incomplete") 
                setTrainingStarted(DashboardStatus.Incomplete);
             else 
-               setTrainingStarted(DashboardStatus.Complete);
+               { setTrainingStarted(DashboardStatus.Complete);
+                var timestamp = result1.lastTrainingDetails["stages"][0]["time"];
+                settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+               }
 
             if(result1.lastTrainingDetails["stages"][3]["status"] === "Incomplete") 
                 setTrainingComplete(DashboardStatus.Incomplete);
             else 
-                setTrainingComplete(DashboardStatus.Complete);
+                { setTrainingComplete(DashboardStatus.Complete);
+                  var timestamp = result1.lastTrainingDetails["stages"][0]["time"];
+                  settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+                }
 
             if(result1.lastTrainingDetails["stages"][4]["status"] === "Incomplete") 
                 setModelsDeployed(DashboardStatus.Incomplete);
             else 
-                setModelsDeployed(DashboardStatus.Complete);
+                { setModelsDeployed(DashboardStatus.Complete);
+                  var timestamp = result1.lastTrainingDetails["stages"][0]["time"];
+                  settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+                } 
  
-                LastUploadDetail = result1.lastTrainingDetails["lastUpdateBefore"];
-                replaceOption = result1.lastTrainingDetails["replaceOption"]; 
+                setLastUploadDetail(result1.lastTrainingDetails["lastUpdateBefore"]);
+                setreplaceOption(result1.lastTrainingDetails["replaceOption"]); 
          }
       
       } catch (error) {
@@ -349,6 +391,8 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
     setqua(a.qua);
     setrev(a.rev);
   }
+  var nextdate = new Date();
+  nextdate.setDate(nextdate.getDate() + 1);
 
   return (
     <Spin spinning={loading}>
@@ -358,7 +402,7 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
             className="site-page-header"
             title="Tomorrow's Prediction"
             style={{ padding: 0 }}
-            tags={<Tag color="blue">{new Date().toDateString()}</Tag>}
+            tags={<Tag color="blue">{ nextdate.toDateString()}</Tag>}
           />
           <br />
           <Select
@@ -410,12 +454,11 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
               className="site-page-header"
               title="Model"
               style={{ padding: 0 }}
-              tags={
-                <Tag color="blue">
-                  Last Training - {new Date(lastTraining).toUTCString()}
-                </Tag>
-              }
             />
+           <div>
+            Last Entry Date -  <Tag color="blue"> { LastEntryDate } </Tag> <br />
+            Version - <strong>{ modelVersion }</strong>
+            </div>
             <div className="site-statistics-demo-card">
             <Row gutter={16}>
               <Col span={12}>
@@ -490,13 +533,7 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
              </Row>
               
             </div>
-            <Button
-              type="primary"
-              onClick={handleAccMoreClick}
-              style={{ position: "absolute", bottom: 0, right: 0, margin: 20 }}
-            >
-              More
-            </Button>
+           
           </div>
         </Card>
 
@@ -517,7 +554,7 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
              }}>
             Next Training - <span> 
                 <Tag color="blue">
-                  {new Date(nextDateparameter).toDateString() } 
+                  { new Date(String(nextdateparamter)).toDateString() } 
                 </Tag>
              </span>
                  
@@ -558,14 +595,7 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
              
           </div>
          <span/>
-  
-          <Button
-            type="primary"
-            style={{ position: "absolute", bottom: 0, right: 0, margin: 20 }}
-          >
-            Upload
-          </Button>
-          </Card>
+      </Card>
       </div>
     </Spin>
   );

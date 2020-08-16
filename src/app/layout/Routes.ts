@@ -5,6 +5,7 @@ import { SignUpForm } from "../../features/SignUp/SignUpForm";
 import { LoadingComponent } from "./LoadingComponent";
 import Accuracy from "../../features/Accuracy/Accuracy";
 import Compare from "../../features/Compare/Compare";
+import Inventory from "../../features/Inventory/Inventory";
 
 export const Routes: {
   [id: string]: { component: React.FC<any>; navKey: string };
@@ -19,4 +20,5 @@ export const Routes: {
     component: LoadingComponent,
     navKey: "",
   },
+  "/inventory":{ component: Inventory, navKey:"8"},
 };
