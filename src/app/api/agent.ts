@@ -9,12 +9,15 @@ axios.defaults.baseURL = "https://salesprediction.el.r.appspot.com/api";
 axios.interceptors.response.use(undefined, (error) => {
   if (error.response.status === 404) {
     history.push("/notfound");
+  } else if (error.response.status === 401 || error.response.status === 403) {
+    history.push("/session");
+    throw error;
   } else {
     throw error;
   }
 });
 
-const responseBody = (response: AxiosResponse) => response.data;
+const responseBody = (response: AxiosResponse) => response?.data;
 
 const sleep = (ms: number) => (response: AxiosResponse) =>
   new Promise<AxiosResponse>((resolve) =>
@@ -68,7 +71,6 @@ const PredictionService = {
   getAccuracy: () => requests.get("/accuracy"),
   getPrediction: (predictionInput: IPredictionInput) =>
     requests.post("/predict", predictionInput),
-
 };
 
 const CompareService = {

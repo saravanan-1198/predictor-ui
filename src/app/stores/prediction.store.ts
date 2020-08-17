@@ -37,23 +37,23 @@ class PredictionStore {
     this.ModelReadyStatus = TrainingStatus.Pending;
     this.tableData = [];
     this.insightData = [];
-    this.StartedStatus = DashboardStatus.Incomplete;  
+    this.StartedStatus = DashboardStatus.Incomplete;
     this.PipelineInitiated = DashboardStatus.Incomplete;
     this.TrainingStarted = DashboardStatus.Incomplete;
-    this.TrainingComplete= DashboardStatus.Incomplete;
+    this.TrainingComplete = DashboardStatus.Incomplete;
     this.ModelsDeployed = DashboardStatus.Incomplete;
-    this.nextdateparamter= String;
+    this.nextdateparamter = String;
     this.replaceOptions = [];
     this.timeStarted = undefined;
     this.LastUploadDetail = undefined;
     this.replaceOption = undefined;
-    this.timePipelineInitiated=undefined;
-    this.timeTrainingStarted=undefined;
-    this.timeTrainingComplete=undefined;
-    this.timeModelsDeployed=undefined;
-    this.Lasttimestamp= "";
-    this.LastEntryDate= undefined;
-    this.modelVersion=undefined;
+    this.timePipelineInitiated = undefined;
+    this.timeTrainingStarted = undefined;
+    this.timeTrainingComplete = undefined;
+    this.timeModelsDeployed = undefined;
+    this.Lasttimestamp = "";
+    this.LastEntryDate = undefined;
+    this.modelVersion = undefined;
   };
 
   @observable
@@ -114,44 +114,44 @@ class PredictionStore {
   ModelReadyStatus: TrainingStatus = TrainingStatus.Pending;
 
   @observable
-  StartedStatus : DashboardStatus = DashboardStatus.Incomplete;
+  StartedStatus: DashboardStatus = DashboardStatus.Incomplete;
 
   @observable
-  PipelineInitiated : DashboardStatus = DashboardStatus.Incomplete;
+  PipelineInitiated: DashboardStatus = DashboardStatus.Incomplete;
 
   @observable
-  TrainingStarted : DashboardStatus = DashboardStatus.Incomplete;
+  TrainingStarted: DashboardStatus = DashboardStatus.Incomplete;
 
   @observable
   TrainingComplete: DashboardStatus = DashboardStatus.Incomplete;
 
   @observable
   ModelsDeployed: DashboardStatus = DashboardStatus.Incomplete;
- 
+
   @observable
-  replaceOptions=[];
+  replaceOptions = [];
 
   @observable
   timeStarted = undefined;
-  
-  @observable
-  LastUploadDetail = undefined ;
 
   @observable
-  replaceOption = undefined ;
+  LastUploadDetail = undefined;
 
   @observable
-  nextdateparamter=String;
+  replaceOption: number | undefined = undefined;
+
+  @observable
+  nextdateparamter = String;
 
   @observable
   timePipelineInitiated = undefined;
-  
+
   @observable
   timeTrainingStarted = undefined;
-  
+
   @observable
   timeTrainingComplete = undefined;
-  
+
   @observable
   timeModelsDeployed = undefined;
 
@@ -162,7 +162,7 @@ class PredictionStore {
   LastEntryDate = undefined;
 
   @observable
-  modelVersion= undefined;
+  modelVersion = undefined;
 
   @computed
   get lineData() {
@@ -368,92 +368,90 @@ class PredictionStore {
     this.branchList = value;
   };
 
-
   @action
   setStarted = (status: DashboardStatus) => {
-    this.StartedStatus = status ;
-  }
+    this.StartedStatus = status;
+  };
 
   @action
   setPipelineInitiated = (status: DashboardStatus) => {
-     this. PipelineInitiated = status;
-  }
+    this.PipelineInitiated = status;
+  };
 
   @action
   setTrainingStarted = (status: DashboardStatus) => {
-    this.TrainingStarted=status;
-  }
+    this.TrainingStarted = status;
+  };
 
   @action
   setTrainingComplete = (status: DashboardStatus) => {
-     this.TrainingComplete = status;
-  }
+    this.TrainingComplete = status;
+  };
 
   @action
   setModelsDeployed = (status: DashboardStatus) => {
-     this.ModelsDeployed = status;
-  }
+    this.ModelsDeployed = status;
+  };
 
   @action
-  setreplaceOptions =(replaceOpti : []) => {
-    this.replaceOptions=replaceOpti;
-  }
+  setreplaceOptions = (replaceOpti: []) => {
+    this.replaceOptions = replaceOpti;
+  };
 
   @action
-  settimeStarted  = (timstamp : any) =>{
+  settimeStarted = (timstamp: any) => {
     this.timeStarted = timstamp;
-  }
+  };
 
-  
   @action
-  setLastUploadDetail = (lastUplo : any) =>  {
+  setLastUploadDetail = (lastUplo: any) => {
     this.LastUploadDetail = lastUplo;
-  }
-  
+  };
+
   @action
-  setreplaceOption = (repl : any) => {
+  setreplaceOption = (repl: number) => {
     this.replaceOption = repl;
-  }
+  };
 
   @action
-  setnextDateparameter = (nextd : any) => {
+  setnextDateparameter = (nextd: any) => {
     this.nextdateparamter = nextd;
-  }
+  };
 
   @action
-  settimePipelineInitiated = (times : any) => {
-     this.timePipelineInitiated = times;
-  }
-  
+  settimePipelineInitiated = (times: any) => {
+    this.timePipelineInitiated = times;
+  };
+
   @action
-  settimeTrainingStarted = (times : any) => {
-    this.timeTrainingStarted= times;
-  }
-  
+  settimeTrainingStarted = (times: any) => {
+    this.timeTrainingStarted = times;
+  };
+
   @action
-  settimeTrainingComplete = (times : any) => {
+  settimeTrainingComplete = (times: any) => {
     this.timeTrainingComplete = times;
-  }
-  
-  @action
-  settimeModelsDeployed = (times : any) => {
-    this.timeModelsDeployed = times;
-  }
+  };
 
-  @action 
+  @action
+  settimeModelsDeployed = (times: any) => {
+    this.timeModelsDeployed = times;
+  };
+
+  @action
   setLasttimestamp = (times: any) => {
     this.Lasttimestamp = times;
-  }
+  };
 
   @action
-  setLastEntryDate = (lastdate : any) => {
+  setLastEntryDate = (lastdate: any) => {
     this.LastEntryDate = lastdate;
-  }
+  };
 
   @action
-  setmodelVersion = (version : any) => {
+  setmodelVersion = (version: any) => {
     this.modelVersion = version;
-  }
+  };
 }
 
 export default createContext<PredictionStore>(new PredictionStore());

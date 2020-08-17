@@ -9,22 +9,23 @@ import { DashboardStatus } from "../../app/models/training-status.enum";
 const { Dragger } = Upload;
 
 export const UploadButtons = () => {
-  const { settimePipelineInitiated,
+  const {
+    settimePipelineInitiated,
     settimeTrainingStarted,
     settimeTrainingComplete,
     settimeModelsDeployed,
-    setnextDateparameter, 
-    settimeStarted, 
+    setnextDateparameter,
+    settimeStarted,
     setreplaceOption,
-    setLastUploadDetail, 
-    setStarted , 
-    setPipelineInitiated, 
-    setTrainingStarted , 
+    setLastUploadDetail,
+    setStarted,
+    setPipelineInitiated,
+    setTrainingStarted,
     setTrainingComplete,
     setModelsDeployed,
-    setreplaceOptions  } = useContext(
-    PredictionStore
-  );
+    setreplaceOptions,
+    replaceOption,
+  } = useContext(PredictionStore);
 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -34,12 +35,14 @@ export const UploadButtons = () => {
     name: "file",
     accept: ".xls",
     multiple: false,
+    data: { replaceOption },
     action: Services.UploadService.FileUploadURL,
     headers: { "x-auth-token": localStorage.getItem("x-auth-token") ?? "" },
     onChange(info: any) {
       const { status } = info.file;
       if (status !== "uploading") {
         console.log(info.file, info.fileList);
+        console.log(info);
       } else {
         setLoading(true);
         setStarted(DashboardStatus.Incomplete);
@@ -56,8 +59,8 @@ export const UploadButtons = () => {
           setTimeout(() => {
             setPipelineInitiated(DashboardStatus.Complete);
             setTrainingStarted(DashboardStatus.Incomplete);
-            setTrainingComplete(DashboardStatus.Incomplete); 
-            setModelsDeployed(DashboardStatus.Incomplete); 
+            setTrainingComplete(DashboardStatus.Incomplete);
+            setModelsDeployed(DashboardStatus.Incomplete);
           }, 2000);
         }, 3000);
       } else if (status === "error") {
@@ -76,62 +79,105 @@ export const UploadButtons = () => {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [replaceOption]);
 
   const allowUpload = async () => {
     setLoading(true);
-    const result = await Services.UploadService.allowUpload();
-    // console.log(result);
-    var nextDate = String(result.nextUpload);
-    var timestamp = result.lastTrainingDetails["stages"][0]["time"];
-    settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
-    var nextDatepara = nextDate.split("/");    
-    setnextDateparameter(String(nextDatepara[2]+"-"+nextDatepara[1]+"-"+Number(Number(nextDatepara[0])+1)));
-    if (mounted) {
-      setDisabled(!result.allowUpload);
-      setNextUpload(result.nextUpload);
-      setreplaceOptions(result.replaceOptions)
-      setLoading(false);
-      if(result.lastTrainingDetails["stages"][0]["status"] === "Incomplete")
-       setStarted(DashboardStatus.Incomplete);
-       else 
-         { setStarted(DashboardStatus.Complete);
+    try {
+      const result = await Services.UploadService.allowUpload();
+      // console.log(result);
+      var nextDate = String(result.nextUpload);
+      var timestamp = result.lastTrainingDetails["stages"][0]["time"];
+      settimeStarted(
+        new Date(timestamp * 1000).toISOString().slice(0, 19).replace("T", " ")
+      );
+      var nextDatepara = nextDate.split("/");
+      setnextDateparameter(
+        String(
+          nextDatepara[2] +
+            "-" +
+            nextDatepara[1] +
+            "-" +
+            Number(Number(nextDatepara[0]) + 1)
+        )
+      );
+      if (mounted) {
+        setDisabled(!result.allowUpload);
+        setNextUpload(result.nextUpload);
+        setreplaceOptions(result.replaceOptions);
+        setLoading(false);
+        if (result.lastTrainingDetails["stages"][0]["status"] === "Incomplete")
+          setStarted(DashboardStatus.Incomplete);
+        else {
+          setStarted(DashboardStatus.Complete);
           var timestamp = result.lastTrainingDetails["stages"][0]["time"];
-          settimeStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+          settimeStarted(
+            new Date(timestamp * 1000)
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ")
+          );
         }
-       if(result.lastTrainingDetails["stages"][1]["status"] === "Incomplete") 
-         setPipelineInitiated(DashboardStatus.Incomplete);
-       else 
-          { setPipelineInitiated(DashboardStatus.Complete);
-            var timestamp = result.lastTrainingDetails["stages"][1]["time"];
-            settimePipelineInitiated(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
-          }
+        if (result.lastTrainingDetails["stages"][1]["status"] === "Incomplete")
+          setPipelineInitiated(DashboardStatus.Incomplete);
+        else {
+          setPipelineInitiated(DashboardStatus.Complete);
+          var timestamp = result.lastTrainingDetails["stages"][1]["time"];
+          settimePipelineInitiated(
+            new Date(timestamp * 1000)
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ")
+          );
+        }
 
-       if(result.lastTrainingDetails["stages"][2]["status"] === "Incomplete") 
+        if (result.lastTrainingDetails["stages"][2]["status"] === "Incomplete")
           setTrainingStarted(DashboardStatus.Incomplete);
-       else 
-          { setTrainingStarted(DashboardStatus.Complete);
-            var timestamp = result.lastTrainingDetails["stages"][2]["time"];
-            settimeTrainingStarted(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
-          }
-
-       if(result.lastTrainingDetails["stages"][3]["status"] === "Incomplete") 
-           setTrainingComplete(DashboardStatus.Incomplete);
-       else 
-        { setTrainingComplete(DashboardStatus.Complete);
-          var timestamp = result.lastTrainingDetails["stages"][3]["time"];
-          settimeTrainingComplete(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
+        else {
+          setTrainingStarted(DashboardStatus.Complete);
+          var timestamp = result.lastTrainingDetails["stages"][2]["time"];
+          settimeTrainingStarted(
+            new Date(timestamp * 1000)
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ")
+          );
         }
 
-       if(result.lastTrainingDetails["stages"][4]["status"] === "Incomplete") 
-           setModelsDeployed(DashboardStatus.Incomplete);
-       else 
-           { setModelsDeployed(DashboardStatus.Complete);
-            var timestamp = result.lastTrainingDetails["stages"][4]["time"];
-            settimeModelsDeployed(new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' '));
-          }
-       setLastUploadDetail(result.lastTrainingDetails["lastUpdateBefore"]);
-       setreplaceOption(result.lastTrainingDetails["replaceOption"]);     
+        if (result.lastTrainingDetails["stages"][3]["status"] === "Incomplete")
+          setTrainingComplete(DashboardStatus.Incomplete);
+        else {
+          setTrainingComplete(DashboardStatus.Complete);
+          var timestamp = result.lastTrainingDetails["stages"][3]["time"];
+          settimeTrainingComplete(
+            new Date(timestamp * 1000)
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ")
+          );
+        }
+
+        if (result.lastTrainingDetails["stages"][4]["status"] === "Incomplete")
+          setModelsDeployed(DashboardStatus.Incomplete);
+        else {
+          setModelsDeployed(DashboardStatus.Complete);
+          var timestamp = result.lastTrainingDetails["stages"][4]["time"];
+          settimeModelsDeployed(
+            new Date(timestamp * 1000)
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ")
+          );
+        }
+        setLastUploadDetail(result.lastTrainingDetails["lastUpdateBefore"]);
+        setreplaceOption(
+          result.replaceOptions.findIndex(
+            (r: string) => r === result.lastTrainingDetails["replaceOption"]
+          )
+        );
+      }
+    } catch (error) {
+      message.error(error.message);
     }
   };
 
