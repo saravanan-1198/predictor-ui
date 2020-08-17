@@ -17,7 +17,11 @@ import {
   UploadOutlined,
   LineChartOutlined,
   MonitorOutlined ,
-  DesktopOutlined ,
+  DesktopOutlined, 
+  InfoCircleOutlined,
+  AreaChartOutlined,
+  BlockOutlined,
+  FolderAddOutlined,
 } from '@ant-design/icons';
 import Home from "../Home/Home";
 
@@ -63,7 +67,7 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
       onClick = {toggle}
       >
   {collapsed ? <MenuFoldOutlined/> : <MenuUnfoldOutlined/> }
-      </Button> <span> </span>
+      </Button> &nbsp;
         Predictor UI</div>
      
       <Menu
@@ -72,15 +76,6 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
           ? [Routes[currentPath].navKey]
           : []}
       >
-        <Menu.Item key="1">
-          <NavLink to="/">Dashboard</NavLink>
-        </Menu.Item>
-        <Menu.Item key="2">
-          <NavLink to="/predict">Predict</NavLink>
-        </Menu.Item>
-        <Menu.Item key="7">
-          <NavLink to="/compare">Compare</NavLink>
-        </Menu.Item>
         <Menu.Item key="5" className="right" disabled>
           <Button type="primary" onClick={handleLogout} htmlType="submit">
             Logout
@@ -116,14 +111,23 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
           <Menu theme="light" mode="inline"  className="menuitem"
           onSelect={toggle}
           >
-            <Menu.Item key="1" >
-            <NavLink to="/" activeClassName="your-active-class">Dashboard</NavLink>
+            <Menu.Item key="1" icon={<DesktopOutlined/>} >
+      <NavLink to="/"  >Dashboard</NavLink>
             </Menu.Item>
-            <Menu.Item key="3" >
-            <NavLink to="/upload" activeClassName="your-active-class">Upload</NavLink>
+            <Menu.Item key="2" icon={<AreaChartOutlined />}>
+            <NavLink to="/predict">Predict</NavLink>
             </Menu.Item>
-            <Menu.Item key="8" >
-          <NavLink to="/inventory" activeClassName="your-active-class">Inventory</NavLink>
+            <Menu.Item key="7" icon={<BlockOutlined />}>
+              <NavLink to="/compare">Compare</NavLink>
+            </Menu.Item>
+            <Menu.Item key="3" icon={<UploadOutlined/>}>
+            <NavLink to="/upload" >Upload</NavLink>
+            </Menu.Item>
+            <Menu.Item key="8" icon={<FolderAddOutlined/>}>
+          <NavLink to="/inventory" >Inventory</NavLink>
+        </Menu.Item>
+        <Menu.Item key="9" icon={<InfoCircleOutlined/>}>
+          <NavLink to="/manage" >Manage</NavLink>
         </Menu.Item>
           </Menu>
         </Sider>

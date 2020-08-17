@@ -27,3 +27,7 @@
 .your-active-class{
   color: white;
 }
+
+Menu.item icon{
+  color: blue;
+}
