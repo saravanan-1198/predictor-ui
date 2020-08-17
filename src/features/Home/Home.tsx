@@ -18,12 +18,14 @@ import CompareStore from "../../app/stores/compare.store";
 import InputStore from "../../app/stores/input.store";
 import predictionStore from "../../app/stores/prediction.store";
 import dashboardStore from "../../app/stores/dashboard.store";
+import Inventory from "../Inventory/Inventory";
+import { SessionExpired } from "../SessionExpired/SessionExpired";
 const { confirm } = Modal;
 const { Content } = Layout;
 
 export const Home: React.FC<RouteComponentProps> = ({ history, location }) => {
   const { logout, isAdminUser, reset: appRestore, isVerified } = useContext(
-    AppStore,
+    AppStore
   );
   const { reset: predictionRestore } = useContext(PredictionStore);
   const { reset: compareRestore } = useContext(CompareStore);
@@ -67,6 +69,7 @@ export const Home: React.FC<RouteComponentProps> = ({ history, location }) => {
             <Route exact path="/predict" component={Prediction} />
             <Route exact path="/compare" component={Compare} />
             <Route exact path="/accuracy" component={Accuracy} />
+            <Route exact path="/inventory" component={Inventory} />
             <ProtectedRoute
               exact
               path="/user/create"

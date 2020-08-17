@@ -9,6 +9,7 @@ import { observer } from "mobx-react-lite";
 import firebase from "firebase";
 import VerifiedUser from "../../features/VerfiedUser/VerifiedUser";
 import { message, notification, PageHeader, Layout, Typography } from "antd";
+import { SessionExpired } from "../../features/SessionExpired/SessionExpired";
 
 const { Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -74,6 +75,7 @@ const App = () => {
           <Route exact path="/login" component={Login} />
           <Route exact path="/loader" component={LoadingComponent} />
           <Route exact path="/verify" component={VerifiedUser} />
+          <Route exact path="/session" component={SessionExpired} />
           <ProtectedRoute
             path="/"
             component={Home}
