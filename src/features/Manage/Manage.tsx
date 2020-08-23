@@ -4,9 +4,9 @@ import { RouteComponentProps } from "react-router-dom";
 
 
 
-const Inventory: React.FC<RouteComponentProps>  = ()=>{
+const Manage: React.FC<RouteComponentProps>  = ()=>{
     return(
-    <div> 
+    <div>
         <h1>
             Currently working on it.....
         </h1>
@@ -14,4 +14,4 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
     );
 }
 
-export default observer(Inventory);
+export default observer(Manage);

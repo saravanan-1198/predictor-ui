@@ -6,6 +6,7 @@ import { LoadingComponent } from "./LoadingComponent";
 import Accuracy from "../../features/Accuracy/Accuracy";
 import Compare from "../../features/Compare/Compare";
 import Inventory from "../../features/Inventory/Inventory";
+import Manage from "../../features/Manage/Manage";
 
 export const Routes: {
   [id: string]: { component: React.FC<any>; navKey: string };
@@ -21,4 +22,5 @@ export const Routes: {
     navKey: "",
   },
   "/inventory":{ component: Inventory, navKey:"8"},
+  "/manage":{ component: Manage, navKey:"8"},
 };

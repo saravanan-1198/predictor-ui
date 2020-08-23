@@ -22,8 +22,13 @@
 
 .menuitem{
   text-emphasis-color:  white;
+  color: black;
 }
 
 .your-active-class{
   color: white;
+}
+
+Menu.item icon{
+  color: blue;
 }
