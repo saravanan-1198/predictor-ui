@@ -19,6 +19,7 @@ import InputStore from "../../app/stores/input.store";
 import predictionStore from "../../app/stores/prediction.store";
 import dashboardStore from "../../app/stores/dashboard.store";
 import Inventory from "../Inventory/Inventory";
+import Manage from "../Manage/Manage";
 import { SessionExpired } from "../SessionExpired/SessionExpired";
 const { confirm } = Modal;
 const { Content } = Layout;
@@ -70,6 +71,7 @@ export const Home: React.FC<RouteComponentProps> = ({ history, location }) => {
             <Route exact path="/compare" component={Compare} />
             <Route exact path="/accuracy" component={Accuracy} />
             <Route exact path="/inventory" component={Inventory} />
+            <Route exact path="/manage" component={Manage} />
             <ProtectedRoute
               exact
               path="/user/create"

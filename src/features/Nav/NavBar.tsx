@@ -63,21 +63,9 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
         <div className="logo">
           <Button onClick={toggle}>
             {collapsed ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
-          </Button>{" "}
-          <span> </span>
-          Predictor UI
+          </Button> &nbsp; Predictor UI
         </div>
 
-    <Layout>      
-        <Header className="header" style={{ padding: 0, background: "#fff" }}>           
-            
-      <div className="logo">
-      <Button
-      onClick = {toggle}
-      >
-  {collapsed ? <MenuFoldOutlined/> : <MenuUnfoldOutlined/> }
-      </Button> &nbsp;
-        Predictor UI</div>
      
 
         <Menu
@@ -88,20 +76,6 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
               : []
           }
         >
-          <Menu.Item key="1">
-            <NavLink to="/">Dashboard</NavLink>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <NavLink to="/predict">Predict</NavLink>
-          </Menu.Item>
-          <Menu.Item key="7">
-            <NavLink to="/compare">Compare</NavLink>
-          </Menu.Item>
-          <Menu.Item key="5" className="right" disabled>
-            <Button type="primary" onClick={handleLogout} htmlType="submit">
-              Logout
-            </Button>
-          </Menu.Item>
           <Menu.Item
             key="4"
             disabled
