@@ -92,7 +92,12 @@ class AppStore {
         const verfi = firebase.auth().currentUser?.emailVerified;
         this.setIsVerified(verfi);
         this.loggingIn = false;
-        return true;
+        const res = await Services.AuthService.login({ email, password });
+        return runInAction("apilogin", () => {
+          localStorage.setItem("x-ftw-context", res.context);
+          localStorage.setItem("x-auth-token", res.token);
+          return true;
+        });
       });
     } catch (error) {
       runInAction("Login Failed", () => {
@@ -116,36 +121,36 @@ class AppStore {
     if (mail) firebase.auth().sendPasswordResetEmail(mail);
   };
 
-  @action
-  login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      const token = await Services.AuthService.login({ email, password });
-      return runInAction("Login", () => {
-        this.loggingIn = false;
-        if (token) {
-          localStorage.setItem(authTokenKey, token);
-          this.token = token;
-          return true;
-        } else {
-          localStorage.removeItem(authTokenKey);
-          this.token = null;
-          return false;
-        }
-      });
-    } catch (error) {
-      runInAction("Login Failed", () => {
-        this.loggingIn = false;
-        if (error.response === undefined) {
-          message.error("Server not running. Please try again later");
-        } else if (error.response.status === 400) {
-          message.error("Invalid user crendentails");
-        } else {
-          message.error("Server Error. Please try again later");
-        }
-      });
-      return false;
-    }
-  };
+  // @action
+  // login = async (email: string, password: string): Promise<boolean> => {
+  //   try {
+  //     const token = await Services.AuthService.login({ email, password });
+  //     return runInAction("Login", () => {
+  //       this.loggingIn = false;
+  //       if (token) {
+  //         localStorage.setItem(authTokenKey, token);
+  //         this.token = token;
+  //         return true;
+  //       } else {
+  //         localStorage.removeItem(authTokenKey);
+  //         this.token = null;
+  //         return false;
+  //       }
+  //     });
+  //   } catch (error) {
+  //     runInAction("Login Failed", () => {
+  //       this.loggingIn = false;
+  //       if (error.response === undefined) {
+  //         message.error("Server not running. Please try again later");
+  //       } else if (error.response.status === 400) {
+  //         message.error("Invalid user crendentails");
+  //       } else {
+  //         message.error("Server Error. Please try again later");
+  //       }
+  //     });
+  //     return false;
+  //   }
+  // };
 
   @action
   logout = async () => {
