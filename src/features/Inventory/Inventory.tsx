@@ -4,6 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { Services } from "../../app/api/agent";
 import {
     PageHeader,
+    Descriptions,
     Statistic,
     Table,
     Row,
@@ -11,7 +12,8 @@ import {
     message,
     Input,
     Space,
-    Button, Select
+    Button,
+     Select
   } from "antd";
   import { SearchOutlined } from "@ant-design/icons";
   import Highlighter from "react-highlight-words";
@@ -275,8 +277,11 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
         <PageHeader
           className="site-page-header"
           title="Inventory"
-          subTitle="Displays the Quantity of each item" />
-        <Select
+          subTitle="Displays the Quantity of each item"
+         />
+         <Descriptions size="default" style={{paddingLeft:20}}>
+           <Descriptions.Item label="Branch">
+           <Select
           onChange={onclickhandle}
           // defaultValue = "Total"
           placeholder="Select Branch Name"
@@ -288,7 +293,7 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
           //    Option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           // }
           size="large"
-          style={{ width: 400 , paddingLeft :100 }}
+          style={{ width: 400}}
           showSearch={true}
         >
         {options.map((v: { id: number; branch: string; items: any; }) => (
@@ -297,6 +302,10 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
           </Option>
         ))}
       </Select>
+        
+           </Descriptions.Item>
+          
+           </Descriptions> 
         <Table
           dataSource={!item ? undefined : item}
           style={{ margin: "0 20px" }}
