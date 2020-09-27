@@ -5,6 +5,10 @@ import { message } from "antd";
 
 // axios.defaults.baseURL = "http://localhost:5000/api";
 axios.defaults.baseURL = "https://salesprediction.el.r.appspot.com/api";
+axios.defaults.headers = {
+  "x-auth-token": localStorage.getItem("x-auth-token"),
+  "x-ftw-context": localStorage.getItem("x-ftw-context"),
+};
 
 axios.interceptors.response.use(undefined, (error) => {
   if (error.response.status === 404) {
@@ -25,20 +29,9 @@ const sleep = (ms: number) => (response: AxiosResponse) =>
   );
 
 const requests = {
-  get: (url: string) =>
-    axios
-      .get(url, {
-        headers: { "x-auth-token": localStorage.getItem("x-auth-token") },
-      })
-      .then(sleep(1000))
-      .then(responseBody),
+  get: (url: string) => axios.get(url).then(sleep(1000)).then(responseBody),
   post: (url: string, body: {}) =>
-    axios
-      .post(url, body, {
-        headers: { "x-auth-token": localStorage.getItem("x-auth-token") },
-      })
-      .then(sleep(1000))
-      .then(responseBody),
+    axios.post(url, body).then(sleep(1000)).then(responseBody),
   put: (url: string, body: {}) =>
     axios.put(url, body).then(sleep(1000)).then(responseBody),
   delete: (url: string) =>
@@ -46,8 +39,11 @@ const requests = {
 };
 
 const AuthService = {
-  login: (credentials: { email: string; password: string }): Promise<string> =>
-    requests.post("/auth", credentials),
+  login: (credentials: {
+    email: string;
+    password: string;
+  }): Promise<{ token: string; context: string }> =>
+    requests.post("/login", credentials),
 };
 
 const UserService = {
