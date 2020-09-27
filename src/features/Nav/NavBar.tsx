@@ -130,6 +130,11 @@ const NavBar: React.FC<IProps> = ({ handleLogout, currentPath }) => {
         <Menu.Item key="9" icon={<InfoCircleOutlined/>}>
           <NavLink to="/manage" >Manage</NavLink>
         </Menu.Item>
+        <Menu.Item key="5" className="right" disabled>
+          <Button type="primary" onClick={handleLogout} htmlType="submit">
+            Logout
+          </Button>
+        </Menu.Item>
           </Menu>
         </Sider>
       </Layout>
