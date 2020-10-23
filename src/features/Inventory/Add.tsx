@@ -6,34 +6,37 @@ import {
     PageHeader,
     Descriptions,
     Statistic,
-    Table,
     Row,
     Spin,
     message,
     Input,
     Space,
     Button,
-     Select, Tabs
+    Select,
+    List, 
+    Card, 
+    Modal
   } from "antd";
-  import { SettingOutlined, EyeOutlined } from '@ant-design/icons';
-  import { SearchOutlined } from "@ant-design/icons";
-  import Highlighter from "react-highlight-words";
-  import InventoryStore from "../../app/stores/inventory.store";
-  import InventoryOp from "./InventoryOp";
-  const {TabPane} = Tabs;
-// import { count } from "console";
+import {Table} from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import Highlighter from "react-highlight-words";
+import InventoryStore from "../../app/stores/inventory.store";  
+
 const { Option } = Select;
 
 const  options: { id: number; branch:string; items: any; }[] =[];
 var count=0;
-const Inventory: React.FC<RouteComponentProps>  = ()=>{
+
+
+  
+const Add = ()=>{
 
     const subFilterCategoriesOriginal: { text: string; value: string }[] = [];
     let subFilterCategories: { text: string; value: string }[] = [];
     const superFilterCategories: { text: string; value: string }[] = [];
     
-    const { treeData } = useContext(InventoryStore);
-    const { accData, setAccData } = useContext(InventoryStore);
+    const { treeData1 } = useContext(InventoryStore);
+    const { accData1, setAccData1 } = useContext(InventoryStore);
     
     const [item,setItems] = useState(undefined);
     const [id,setId] = useState(0);
@@ -45,6 +48,49 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
     const [searchedColumn, setSearchedColumn] = useState("");
   
     let searchInput: Input | null = null;
+
+    useEffect(() => {
+        let mounted = true;
+    
+        const loadAccuracy = async () => {
+          try {
+            subFilterCategoriesOriginal.length = 0;
+            subFilterCategories.length = 0;
+            superFilterCategories.length = 0;
+    
+            setLoading(true);
+            const result = await Services.AssetService.getLiveInventory();
+            count=0;
+            result.forEach((element: { [x: string]: any; }) => {
+              // console.log(element);
+              options.push({
+                id: count,
+                branch: element["branch"],
+                items: element["items"]
+              });
+              count++;
+            });
+            console.log(options);
+            if (mounted) {
+              setAccData1(result);
+              populateFilters(result);
+              setLoading(false);
+            }
+          } catch (error) {
+            message.error("Unable to connect to server. Try again later.");
+            if (mounted) setLoading(false);
+          }
+        };
+    
+        if (!accData1) {
+          loadAccuracy();
+        }
+    
+        return () => {
+          mounted = false;
+        };  
+      }, []);  
+
     const getColumnSearchProps = (dataIndex: string) => ({
         filterDropdown: ({
           setSelectedKeys,
@@ -120,47 +166,7 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
         setSearchText("");
       };
     
-      useEffect(() => {
-        let mounted = true;
-    
-        const loadAccuracy = async () => {
-          try {
-            subFilterCategoriesOriginal.length = 0;
-            subFilterCategories.length = 0;
-            superFilterCategories.length = 0;
-    
-            setLoading(true);
-            const result = await Services.AssetService.getLiveInventory();
-            count=0;
-            result.forEach((element: { [x: string]: any; }) => {
-              // console.log(element);
-              options.push({
-                id: count,
-                branch: element["branch"],
-                items: element["items"]
-              });
-              count++;
-            });
-            // console.log(options);
-            if (mounted) {
-              setAccData(result);
-              populateFilters(result);
-              setLoading(false);
-            }
-          } catch (error) {
-            message.error("Unable to connect to server. Try again later.");
-            if (mounted) setLoading(false);
-          }
-        };
-    
-        if (!accData) {
-          loadAccuracy();
-        }
-    
-        return () => {
-          mounted = false;
-        };  
-      }, []);
+      
     
       const populateFilters = (value: any) => {
         value.items.forEach((item: any) => {
@@ -240,7 +246,7 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
           subFilterCategories.length = 0;
     
           filters.super_category.forEach((value: any) => {
-            const cat = treeData.find((c) => c.title === value);
+            const cat = treeData1.find((c) => c.title === value);
             cat.children.forEach((subCat: any) => {
               subFilterCategories.push({
                 text: subCat.title,
@@ -258,7 +264,7 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
     
     
       const onclickhandle = (e: any, a:any) => {
-        // console.log(e+" "+a.id+" "+a.items);
+        console.log(e+" "+a.id+" "+a.items);
         setItems(a.items);
         setId(a.id);
       }
@@ -267,71 +273,78 @@ const Inventory: React.FC<RouteComponentProps>  = ()=>{
         console.log('blur');
       }
       
-      function onFocus() {
+      function onFocus(e : any) {
         console.log('focus');
       }
       
       function onSearch(val: any) {
         console.log('search:', val);
       }
+ 
+      // function rowfunc(r:any){
+      //       <Modal 
+      //        title={r.name}>
+      //          <p>Sub-Category - {r.sub_category}</p> 
+      //         <p> Super-Category - {r.super_category}</p>
+      //          <p>Quantity - {r.quantity}</p>
+      //      </Modal>      
+      // }
 
-    var InventoryOp1 = () => {
-
-      return <InventoryOp></InventoryOp> ;
-    } 
     return(
-        <Spin spinning={loading}>
-        <PageHeader
-          className="site-page-header"
-          title="Inventory"
-          subTitle="Displays the Quantity of each item"
-          />
-           <Tabs defaultActiveKey="1" type="card"> 
-    <TabPane tab={ <span> <EyeOutlined /> Live </span> } key="1"> 
-                  <Descriptions size="default" style={{paddingLeft:20}}>
-                    <Descriptions.Item label="Branch">
-                        <Select
-                         onChange={onclickhandle}
-                         placeholder="Select Branch Name"
-                         optionFilterProp="children"
-                         onSearch={onSearch}
-                         onFocus={onFocus}
-                         onBlur={onBlur}
-                         size="large"
-                         style={{ width: 400}}
-                         showSearch={true}
-                       >
-                      {options.map((v: { id: number; branch: string; items: any; }) => (
-                          <Option id={v.id} value={v.branch} items={v.items}>
-                              {v.branch}
-                          </Option>
-                       ))}
-                       </Select>
-                    </Descriptions.Item>
-                </Descriptions> 
-                 <Table
-                   dataSource={!item ? undefined : item}
-                   style={{ margin: "0 20px" }}
-                   columns={columns}
-                   onChange={handleOnTableChange}
-                   pagination={{
-                     pageSize: pageSize,
-                     pageSizeOptions: ["10", "50", "100"],
-                     onShowSizeChange: onPageSizeChange,
-                     showSizeChanger: true,
-                     position: ["bottomRight"],
-                   }}
-                   scroll={{ y: 380 }}
-                   bordered />
-            </TabPane> 
-            
-                  <TabPane tab={ <span> <SettingOutlined/> Operation </span>} key="2"> 
-               <InventoryOp></InventoryOp>
-            </TabPane> 
-             
-           </Tabs>
-        </Spin>
+        
+        <>
+         <Spin spinning={loading}>
+
+        <Descriptions size="default" style={{ paddingLeft: 20 }}>
+            <Descriptions.Item label="Branch">
+                <Select
+                    onChange={onclickhandle}
+                    // defaultValue = "Total"
+                    placeholder="Select Branch Name"
+                    optionFilterProp="children"
+                    onSearch={onSearch}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                    // filterOption={(input, Option) =>
+                    //    Option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    // }
+                    size="large"
+                    style={{ width: 400 }}
+                    showSearch={true}
+                >
+                    {options.map((v: { id: number; branch: string; items: any; }) => (
+                        <Option id={v.id} value={v.branch} items={v.items}>
+                            {v.branch}
+                        </Option>
+                    ))}
+                </Select>
+            </Descriptions.Item>
+        </Descriptions>
+            <Table
+                dataSource={!item ? undefined : item}
+                style={{ margin: "0 20px" }}
+                columns={columns}
+                onChange={handleOnTableChange}
+                onRow ={ (r : any) => ({ onClick: () => (
+                   <Modal
+                     title={r.name}>
+                     <p>Sub-Category - {r.sub_category}</p> 
+                     <p> Super-Category - {r.super_category}</p>
+                     <p>Quantity - {r.quantity}</p>
+                   </Modal> 
+                )  })}
+                pagination={{
+                    pageSize: pageSize,
+                    pageSizeOptions: ["10", "50", "100"],
+                    onShowSizeChange: onPageSizeChange,
+                    showSizeChanger: true,
+                    position: ["bottomRight"],
+                }}
+                scroll={{ y: 380 }}
+                bordered />
+            </Spin>
+                </>
     );
 }
 
-export default observer(Inventory);
+export default observer(Add);
